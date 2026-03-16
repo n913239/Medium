@@ -1,0 +1,9 @@
+# Medium 官方匯出（含個人隱私資料）
+medium-export-*/
+*.zip
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
