@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<title>Markdown to Medium Converter</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; }
+  .header { background: #1a1a2e; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header span { font-size: 13px; color: #aaa; }
+  .container { display: flex; height: calc(100vh - 56px); }
+  .panel { flex: 1; display: flex; flex-direction: column; }
+  .panel-header { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .panel-header h2 { font-size: 14px; color: #333; }
+  .divider { width: 4px; background: #ddd; cursor: col-resize; }
+  textarea {
+    flex: 1; width: 100%; padding: 20px; border: none; outline: none;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 14px;
+    line-height: 1.7; resize: none; background: #fafafa;
+  }
+  .preview-wrap { flex: 1; overflow-y: auto; background: #fff; }
+  .preview {
+    max-width: 680px; margin: 0 auto; padding: 40px 20px;
+    font-family: Georgia, "Times New Roman", serif; font-size: 18px;
+    line-height: 1.8; color: #333;
+  }
+  .preview h1 { font-size: 32px; margin-bottom: 8px; font-family: -apple-system, sans-serif; }
+  .preview h2 { font-size: 24px; margin: 32px 0 12px; font-family: -apple-system, sans-serif; }
+  .preview h3 { font-size: 20px; margin: 24px 0 8px; font-family: -apple-system, sans-serif; }
+  .preview p { margin-bottom: 16px; }
+  .preview blockquote { border-left: 3px solid #333; padding-left: 16px; margin: 16px 0; color: #555; font-style: italic; }
+  .preview ul, .preview ol { margin: 16px 0; padding-left: 30px; }
+  .preview li { margin-bottom: 8px; }
+  .preview code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 15px; }
+  .preview pre { background: #f0f0f0; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 16px 0; }
+  .preview pre code { background: none; padding: 0; font-size: 14px; }
+  .preview img { max-width: 100%; margin: 16px 0; }
+  .preview hr { border: none; border-top: 1px solid #ddd; margin: 32px 0; }
+  .preview strong { font-weight: 700; }
+  .btn {
+    padding: 6px 14px; border: 1px solid #ddd; border-radius: 4px;
+    background: #fff; cursor: pointer; font-size: 13px; color: #333;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #f0f0f0; }
+  .btn-primary { background: #1a8917; color: #fff; border-color: #1a8917; }
+  .btn-primary:hover { background: #0f6d0e; }
+  .btn-group { display: flex; gap: 8px; }
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; padding: 10px 24px; border-radius: 6px;
+    font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Markdown to Medium Converter</h1>
+  <span>貼上 Markdown，右側預覽 Medium 效果，一鍵複製貼到 Medium</span>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Markdown</h2>
+      <div class="btn-group">
+        <button class="btn" onclick="loadSample()">載入範例</button>
+        <button class="btn" onclick="clearAll()">清除</button>
+      </div>
+    </div>
+    <textarea id="editor" placeholder="在這裡貼上你的 Markdown 內容..."></textarea>
+  </div>
+
+  <div class="divider" id="divider"></div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Preview (Medium Style)</h2>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="copyRichText()">複製內容 (貼到 Medium)</button>
+      </div>
+    </div>
+    <div class="preview-wrap">
+      <div class="preview" id="preview"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const editor = document.getElementById('editor');
+const preview = document.getElementById('preview');
+
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
+
+editor.addEventListener('input', render);
+
+function render() {
+  preview.innerHTML = marked.parse(editor.value);
+}
+
+function copyRichText() {
+  const html = preview.innerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const plainBlob = new Blob([preview.innerText], { type: 'text/plain' });
+  const item = new ClipboardItem({
+    'text/html': blob,
+    'text/plain': plainBlob
+  });
+  navigator.clipboard.write([item]).then(() => {
+    showToast('已複製！直接到 Medium 編輯器 Ctrl+V / Cmd+V 貼上');
+  }).catch(() => {
+    // fallback
+    const range = document.createRange();
+    range.selectNodeContents(preview);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    showToast('已複製！直接到 Medium 編輯器 Ctrl+V / Cmd+V 貼上');
+  });
+}
+
+function copyHTML() {
+  navigator.clipboard.writeText(preview.innerHTML).then(() => {
+    showToast('HTML 已複製到剪貼簿');
+  });
+}
+
+function clearAll() {
+  editor.value = '';
+  preview.innerHTML = '';
+}
+
+function loadSample() {
+  editor.value = `# 文章標題
+
+> 這是一段引用文字
+
+## 第一段
+
+這是一段普通的文字，包含 **粗體** 和 *斜體*。
+
+還有 \`inline code\` 可以使用。
+
+## 程式碼區塊
+
+\`\`\`javascript
+function hello(name) {
+  console.log(\\\`Hello, \\\${name}!\\\`);
+}
+\`\`\`
+
+## 列表
+
+- 項目一
+- 項目二
+- 項目三
+
+1. 第一步
+2. 第二步
+3. 第三步
+
+---
+
+## 總結
+
+這是用 **Markdown to Medium Converter** 產生的測試文章。
+`;
+  render();
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Drag to resize panels
+const divider = document.getElementById('divider');
+let isDragging = false;
+divider.addEventListener('mousedown', () => isDragging = true);
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  const container = document.querySelector('.container');
+  const rect = container.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  const panels = document.querySelectorAll('.panel');
+  panels[0].style.flex = ratio;
+  panels[1].style.flex = 1 - ratio;
+});
+document.addEventListener('mouseup', () => isDragging = false);
+</script>
+
+</body>
+</html>
