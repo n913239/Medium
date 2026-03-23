@@ -1,3 +1,8 @@
+<!-- Tags: Claude Code, AI Coding, Software Development, Developer, Programming -->
+
+*(在這裡插入封面圖：cover.png)*
+![cover](cover.png)
+
 # 工程師的 AI 加速器 — Claude Code 實戰應用分享
 
 > 用了之後回不去的開發體驗
