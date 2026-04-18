@@ -1,7 +1,7 @@
 <!-- Tags: Claude Code, AI Tools, Developer Productivity, Software Development, Workflow Automation -->
 
 *(Insert cover image: cover.png)*
-![cover](../2026-04-17_claude-code-skills/cover.png)
+![cover](cover.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi engineer character stands in front of a magical toolbox labeled "Skills". The toolbox is open, glowing softly, with colorful tool icons floating out: a broom (clean), a document (convert), a magnifying glass (check). On the left side, a notebook labeled "CLAUDE.md" sits on a desk. The engineer looks excited, reaching for the floating tools. Soft pastel colors (mint, peach, lavender), white background, clean and simple. 16:9 ratio.
 -->
@@ -45,7 +45,7 @@ That means **how well you write the description directly affects whether Claude 
 In short: **CLAUDE.md is rules. Skills are abilities.**
 
 *(Insert image: skills-vs-claudemd.png)*
-![skills-vs-claudemd](../2026-04-17_claude-code-skills/skills-vs-claudemd.png)
+![skills-vs-claudemd](skills-vs-claudemd.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration with two panels. Left panel "CLAUDE.md": a kawaii notebook with a checklist and gears icon, labeled "Rules - Always On". Right panel "Skills": a kawaii toolbox with colorful tools popping out, labeled "Abilities - On Demand". Both panels have a small chibi engineer character. Soft pastel colors, white background, simple and clean. 16:9 ratio.
 -->
@@ -53,7 +53,7 @@ Gemini prompt: A cute Ghibli-inspired soft pastel illustration with two panels. 
 How Skills differ from CLAUDE.md:
 
 *(Insert image: table-comparison.png)*
-![table-comparison](../2026-04-17_claude-code-skills/table-comparison-en.png)
+![table-comparison](table-comparison-en.png)
 <!--
 | | CLAUDE.md | Skills |
 |---|---|---|
@@ -105,7 +105,7 @@ That's it. No other configuration needed.
 Where you store a skill determines its scope:
 
 *(Insert image: table-scope.png)*
-![table-scope](../2026-04-17_claude-code-skills/table-scope-en.png)
+![table-scope](table-scope-en.png)
 <!--
 | Level | Path | Scope |
 |---|---|---|
@@ -125,7 +125,7 @@ Where you store a skill determines its scope:
 Claude Code ships with several Bundled Skills — no installation needed, available in every session:
 
 *(Insert image: table-bundled.png)*
-![table-bundled](../2026-04-17_claude-code-skills/table-bundled-en.png)
+![table-bundled](table-bundled-en.png)
 <!--
 | Skill | Purpose |
 |---|---|
@@ -172,7 +172,7 @@ Teams can also set up their own Marketplace for centralized plugin management:
 Once added, team members can install shared tools with one click — no manual setup per person.
 
 *(Insert image: plugin-marketplace.png)*
-![plugin-marketplace](../2026-04-17_claude-code-skills/plugin-marketplace.png)
+![plugin-marketplace](plugin-marketplace.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration of a magical marketplace storefront. The shop sign reads "Plugin Marketplace". Shelves display colorful plugin boxes with labels like "GitHub", "TypeScript", "Slack". A chibi engineer character browses the shelves with a shopping basket. Some plugin boxes glow softly. Soft pastel colors (mint, peach, lavender, sky blue), white background, clean and simple. 16:9 ratio.
 -->
@@ -295,7 +295,7 @@ Claude Code has a built-in `docx` skill that also uses pandoc under the hood —
 For deliverable documents, this detail matters. Testing with the same document:
 
 *(Insert image: table-docx-compare.png)*
-![table-docx-compare](../2026-04-17_claude-code-skills/table-docx-compare-en.png)
+![table-docx-compare](table-docx-compare-en.png)
 <!--
 | Item | `/convert-docx` | Official `docx` skill (pandoc) |
 |------|:---------------:|:-------------------------:|
@@ -310,7 +310,7 @@ The custom Skill adds a `fix_tables.py` post-processing script that uses `python
 **This is the value of custom Skills: enhancing official tools to fit your specific needs.**
 
 *(Insert image: skills-workflow.png)*
-![skills-workflow](../2026-04-17_claude-code-skills/skills-workflow.png)
+![skills-workflow](skills-workflow.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration showing a workflow. Three kawaii tool icons in a row connected by arrows: (1) a broom icon labeled "clean-legacy" sweeping code, (2) a magnifying glass with checkmark labeled "clean-check" inspecting, (3) a document icon with Word logo labeled "convert-docx" transforming. A small chibi engineer character watches happily. Soft pastel colors, white background, clean layout. 16:9 ratio.
 -->
@@ -322,7 +322,7 @@ Gemini prompt: A cute Ghibli-inspired soft pastel illustration showing a workflo
 The YAML at the top of `SKILL.md` controls skill behavior. Here are the commonly used fields:
 
 *(Insert image: table-frontmatter.png)*
-![table-frontmatter](../2026-04-17_claude-code-skills/table-frontmatter-en.png)
+![table-frontmatter](table-frontmatter-en.png)
 <!--
 | Field | Description | Default |
 |---|---|---|
@@ -350,7 +350,7 @@ allowed-tools: [Read, Grep, Glob]  # read-only Skill, no file writes
 This is easy to confuse, so here's a table to clarify:
 
 *(Insert image: table-invocation.png)*
-![table-invocation](../2026-04-17_claude-code-skills/table-invocation-en.png)
+![table-invocation](table-invocation-en.png)
 <!--
 | Setting | You can invoke | Claude auto-invokes | Best for |
 |---|---|---|---|
@@ -489,7 +489,7 @@ A simple heuristic:
 The two complement each other: use a Skill for the main work, and pair it with a Hook to automatically run validation or send a notification in the background.
 
 *(Insert image: skills-vs-hooks.png)*
-![skills-vs-hooks](../2026-04-17_claude-code-skills/skills-vs-hooks.png)
+![skills-vs-hooks](skills-vs-hooks.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration with two panels. Left panel "Hooks": a kawaii alarm clock or sensor icon with lightning bolt, labeled "Event-Driven — Always Watching". Right panel "Skills": a kawaii toolbox with a hand reaching in, labeled "On Demand — Called When Needed". Both panels have a small chibi engineer character. Soft pastel colors, white background, simple and clean. 16:9 ratio.
 -->

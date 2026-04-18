@@ -1,7 +1,7 @@
 <!-- Tags: Artificial Intelligence, AI Agents, Software Engineering, Developer Tools, Productivity Workflow -->
 
 *(Insert cover image here: cover.png)*
-![cover](../2026-04-24_claude-code-agents/cover.png)
+![cover](cover.png)
 
 # Specialized Roles in Claude Code — Agents: The Complete Guide
 
@@ -68,14 +68,14 @@ A simple analogy: **Skill is the commander, Agent is the executor.**
 **Agent handles:** executing a single task in isolation, analyzing and reporting results.
 
 *(Insert image here: agent-flow.png)*
-![agent-flow](../2026-04-24_claude-code-agents/agent-flow.png)
+![agent-flow](agent-flow.png)
 
 Design principle:
 - "Steps that need user input" → Skill
 - "Heavy analysis that needs no interaction" → Agent
 
 *(Insert image here: table-skill-vs-agent-en.png)*
-![table-skill-vs-agent](../2026-04-24_claude-code-agents/table-skill-vs-agent-en.png)
+![table-skill-vs-agent](table-skill-vs-agent-en.png)
 <!--
 | Dimension | Skill | Agent |
 |-----------|-------|-------|
@@ -115,7 +115,7 @@ When invoked, follow these steps:
 Three key frontmatter fields:
 
 *(Insert image here: table-agent-frontmatter-en.png)*
-![table-agent-frontmatter](../2026-04-24_claude-code-agents/table-agent-frontmatter-en.png)
+![table-agent-frontmatter](table-agent-frontmatter-en.png)
 <!--
 | Field | Description | Example |
 |-------|-------------|---------|
@@ -338,7 +338,7 @@ Throughout the process, `ios-reviewer` handles the entire diff in its own isolat
 ## Five iOS Agents at a Glance
 
 *(Insert image here: table-ios-agents-en.png)*
-![table-ios-agents](../2026-04-24_claude-code-agents/table-ios-agents-en.png)
+![table-ios-agents](table-ios-agents-en.png)
 <!--
 | Agent | Purpose | Invoked by | Scope |
 |-------|---------|------------|-------|
@@ -387,7 +387,7 @@ The core question: **"Does this step generate a lot of output, or does it requir
 **Principle: give the Agent the minimum toolset it actually needs.**
 
 *(Insert image here: table-tools-guide-en.png)*
-![table-tools-guide](../2026-04-24_claude-code-agents/table-tools-guide-en.png)
+![table-tools-guide](table-tools-guide-en.png)
 <!--
 | Task type | Recommended tools | Notes |
 |-----------|-------------------|-------|

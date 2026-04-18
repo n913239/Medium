@@ -18,7 +18,7 @@ These three lean technical: building directly with the Anthropic API, deploying 
 
 ## The Final 3 at a Glance
 
-![The Final 3 Certifications](../2026-04-05_claude-certifications-3/table-certifications-3-en.png)
+![The Final 3 Certifications](table-certifications-3-en.png)
 
 <!--
 | # | Certification | Difficulty | Topic |
@@ -43,7 +43,7 @@ What it covers:
 
 **Takeaway**: This is the course for people who don't know what they don't know. Most people's mental model of AI is either way too optimistic or needlessly skeptical. This course recalibrates both — AI is a powerful tool, but understanding its hard limits is what actually lets you use it well.
 
-*(Insert image: ../2026-04-05_claude-certifications-3/14-AI-Capabilities-and-Limitations.jpg)*
+*(Insert image: 14-AI-Capabilities-and-Limitations.jpg)*
 
 ---
 
@@ -61,7 +61,7 @@ What it covers:
 
 **Takeaway**: If you've only ever used Claude through the web interface or Claude Code, this course gives you a clear picture of what's happening under the hood. The Messages API design and streaming implementation are especially useful if you want to embed Claude into your own product. Essential reading for engineers building on top of Claude.
 
-*(Insert image: ../2026-04-05_claude-certifications-3/15-Claude-with-the-Anthropic-API.jpg)*
+*(Insert image: 15-Claude-with-the-Anthropic-API.jpg)*
 
 ---
 
@@ -79,7 +79,7 @@ What it covers:
 
 **Takeaway**: The AWS counterpart to the Vertex AI course from the previous article. If your company runs on AWS, using Claude through Bedrock lets you plug into existing AWS infrastructure — IAM, CloudWatch, VPC — and makes compliance and security much easier to manage. Even without hands-on Bedrock experience, the course material alone is enough to pass the exam.
 
-*(Insert image: ../2026-04-05_claude-certifications-3/16-Claude-with-Amazon-Bedrock.jpg)*
+*(Insert image: 16-Claude-with-Amazon-Bedrock.jpg)*
 
 ---
 
