@@ -16,7 +16,7 @@ As someone already deep in the Claude ecosystem, I had to keep the streak going.
 
 ## The 6 New Certifications at a Glance
 
-![The 6 New Certifications](../2026-04-02_claude-certifications-2/table-certifications-2-en.png)
+![The 6 New Certifications](table-certifications-2-en.png)
 
 <!--
 | # | Certification | Difficulty | Topic |
@@ -44,7 +44,7 @@ What it covers:
 
 **Takeaway**: If you've used Claude Code, you've already experienced MCP in action — connecting to databases, calling external APIs, etc. This course lays out the underlying protocol clearly. Understanding the fundamentals makes configuring MCP Servers much more intuitive.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/08-Introduction-to-MCP.jpg)*
+*(Insert image: 08-Introduction-to-MCP.jpg)*
 
 ---
 
@@ -61,7 +61,7 @@ What it covers:
 
 **Takeaway**: This one's packed with value. The sections on transport selection and security are essential if you plan to adopt MCP in a team or product. The exam tests some implementation details, so I'd recommend going through the full course material before attempting it.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/09-MCP-Advanced-Topics.jpg)*
+*(Insert image: 09-MCP-Advanced-Topics.jpg)*
 
 ---
 
@@ -78,7 +78,7 @@ What it covers:
 
 **Takeaway**: There's some overlap with "Teaching the AI Fluency Framework," but this one leans more academic. It's great if you want a deeper understanding of the theory behind AI literacy. If you're responsible for AI adoption strategy at your company, the frameworks here are worth studying.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/10-AI-Fluency-Framework-Foundations.jpg)*
+*(Insert image: 10-AI-Fluency-Framework-Foundations.jpg)*
 
 ---
 
@@ -95,7 +95,7 @@ What it covers:
 
 **Takeaway**: If your company already runs on Google Cloud, using Claude through Vertex AI lets you leverage existing IAM, billing, and monitoring. Less useful for individual developers, but very practical for enterprise users. That said, even if you don't use Vertex AI, you can still pass the exam just by studying the course material.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/11-Claude-with-Vertex-AI.jpg)*
+*(Insert image: 11-Claude-with-Vertex-AI.jpg)*
 
 ---
 
@@ -112,7 +112,7 @@ What it covers:
 
 **Takeaway**: This course gave me a more systematic understanding of "how to collaborate with AI." It's not just about throwing a prompt and expecting a perfect result — it's about treating Claude as a real working partner.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/12-Introduction-to-Claude-Cowork.jpg)*
+*(Insert image: 12-Introduction-to-Claude-Cowork.jpg)*
 
 ---
 
@@ -129,7 +129,7 @@ What it covers:
 
 **Takeaway**: If you've used Claude Code's Agent features, you know how powerful Subagents can be — spinning up multiple threads to search, analyze, and execute tasks simultaneously. This course explains the mechanics behind it, helping you better control and leverage this capability.
 
-*(Insert image: ../2026-04-02_claude-certifications-2/13-Introduction-to-Subagents.jpg)*
+*(Insert image: 13-Introduction-to-Subagents.jpg)*
 
 ---
 

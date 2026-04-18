@@ -115,7 +115,7 @@ One letter difference — `static let` vs `static var` — but the consequences 
 
 ### Good candidates: simple API, no customization needed, truly one-to-one
 
-![Good Singleton candidates](../2026-03-26_singleton-dependency-inversion/table-good-singleton.png)
+![Good Singleton candidates](table-good-singleton.png)
 
 <!--
 | Use case | Why it works |
@@ -129,7 +129,7 @@ One letter difference — `static let` vs `static var` — but the consequences 
 
 ### Bad candidates: short lifecycle, needs multiple instances, complex state
 
-![Bad Singleton candidates](../2026-03-26_singleton-dependency-inversion/table-bad-singleton.png)
+![Bad Singleton candidates](table-bad-singleton.png)
 
 <!--
 | Use case | Why it breaks |
@@ -332,7 +332,7 @@ class OrderViewModel {
 
 ## Back to the Printer Analogy
 
-![Before vs After](../2026-03-26_singleton-dependency-inversion/table-before-after.png)
+![Before vs After](table-before-after.png)
 
 <!--
 | Before | After |

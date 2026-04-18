@@ -1,7 +1,7 @@
 <!-- Tags: Claude Code, Prompt Engineering, Ai Coding, Spec Driven Development, Developer Productivity -->
 
 *(Insert cover image: cover.png)*
-![cover](../2026-04-10_openspec-opsx/cover.png)
+![cover](cover.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi engineer character and a kawaii AI robot sit at a table together, looking at a glowing blueprint document between them labeled "Spec". The engineer points at the spec, and the AI robot nods with a happy lightbulb above its head. Behind them, a neat stack of documents (proposal, specs, design, tasks) floats softly. Soft pastel colors (mint, peach, lavender, sky blue), white background, clean and simple. 16:9 ratio.
 -->
@@ -38,8 +38,8 @@ Its core philosophy:
 
 The idea is simple: **agree on the spec before AI touches any code.**
 
-*(Insert image: ../2026-04-10_openspec-opsx/workflow-overview.png)*
-![workflow-overview](../2026-04-10_openspec-opsx/workflow-overview.png)
+*(Insert image: workflow-overview.png)*
+![workflow-overview](workflow-overview.png)
 
 ---
 
@@ -52,8 +52,8 @@ openspec init
 
 `openspec init` creates the `openspec/` folder and `config.yaml` in your project root, and automatically injects slash commands into your Claude Code environment. For full details, see the [official GitHub](https://github.com/Fission-AI/OpenSpec).
 
-*(Insert image: ../2026-04-10_openspec-opsx/install-result.png)*
-![install-result](../2026-04-10_openspec-opsx/install-result.png)
+*(Insert image: install-result.png)*
+![install-result](install-result.png)
 
 ---
 
@@ -134,16 +134,16 @@ AI:   Archived to openspec/changes/archive/2026-04-06-refactor-api-error-handlin
 
 The key idea: **the expanded commands break what used to be one big step into reviewable stages** — you get to read and adjust each artifact before moving on. `/opsx:explore` adds one more layer before that: think it through before you build.
 
-*(Insert image: ../2026-04-10_openspec-opsx/command-flow.png)*
-![command-flow](../2026-04-10_openspec-opsx/command-flow.png)
+*(Insert image: command-flow.png)*
+![command-flow](command-flow.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration showing a horizontal flow of six kawaii rounded box characters connected by arrows, each with a tiny face: "explore" (dashed border, optional, slightly faded with a thinking expression) → "new" → "ff" → "apply" → "verify" → "archive". Each box is a different soft pastel color (lavender, mint, peach, sky blue, yellow, coral). Arrows between them are friendly and rounded. Clean white background, simple and cheerful. 16:9 ratio.
 -->
 
 Every change gets its own folder with four documents:
 
-*(Insert image: table-artifacts.png)*
-![table-artifacts](table-artifacts.png)
+*(Insert image: table-artifacts-en.png)*
+![table-artifacts](table-artifacts-en.png)
 
 <!--
 | Document | Contents |
@@ -197,8 +197,8 @@ This is the core of prompt engineering: **converting vague intent into structure
 
 opsx makes this a first-class part of the workflow — not something you have to reinvent each time.
 
-*(Insert image: ../2026-04-10_openspec-opsx/prompt-comparison.png)*
-![prompt-comparison](../2026-04-10_openspec-opsx/prompt-comparison.png)
+*(Insert image: prompt-comparison.png)*
+![prompt-comparison](prompt-comparison.png)
 
 ---
 
@@ -227,8 +227,8 @@ This context is injected into every artifact's prompt — so the AI always knows
 
 This maps closely to how RAG works:
 
-*(Insert image: table-rag-comparison.png)*
-![table-rag-comparison](table-rag-comparison.png)
+*(Insert image: table-rag-comparison-en.png)*
+![table-rag-comparison](table-rag-comparison-en.png)
 
 <!--
 | | RAG | opsx config.yaml |
@@ -241,8 +241,8 @@ This maps closely to how RAG works:
 
 opsx is "manual RAG" — you maintain the context yourself rather than auto-indexing from documents. The upside: **version-controlled, transparent, fully in your control**. You know exactly what the AI sees.
 
-*(Insert image: ../2026-04-10_openspec-opsx/folder-structure.png)*
-![folder-structure](../2026-04-10_openspec-opsx/folder-structure.png)
+*(Insert image: folder-structure.png)*
+![folder-structure](folder-structure.png)
 
 ---
 
@@ -334,8 +334,8 @@ opsx's value is in making specs explicit — but not every situation is worth th
 
 The simple rule: **opsx pays off when your change is worth documenting, reproducing, and explaining to someone else.**
 
-*(Insert image: ../2026-04-10_openspec-opsx/when-not-to-use.png)*
-![when-not-to-use](../2026-04-10_openspec-opsx/when-not-to-use.png)
+*(Insert image: when-not-to-use.png)*
+![when-not-to-use](when-not-to-use.png)
 
 ---
 

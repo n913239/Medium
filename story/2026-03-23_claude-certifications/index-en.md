@@ -16,7 +16,7 @@ As a developer who already uses Claude Code heavily in my daily workflow, I coul
 
 ## Overview of All 7 Certifications
 
-![Overview of All 7 Certifications](table-certifications.png)
+![Overview of All 7 Certifications](table-certifications-en.png)
 
 <!--
 | # | Certification | Difficulty | Topic |

@@ -238,7 +238,7 @@ final class AppCoordinator: Coordinator {
 ViewControllers now only handle their own screen logic — they no longer need to know what comes next in the app. Navigation logic can be tested in isolation, and VCs become easier to test and replace.
 
 *(Insert image here: coordinator-flow.png)*
-![coordinator-flow](../2026-04-05_tdd-modular-at-work/coordinator-flow.png)
+![coordinator-flow](coordinator-flow.png)
 
 ---
 
@@ -265,7 +265,7 @@ Every extracted method is a testable unit. Every Coordinator removes a responsib
 The course gave me the vocabulary and the patterns. The real project gave me the practice and the proof.
 
 *(Insert image here: before-after.png)*
-![before-after](../2026-04-05_tdd-modular-at-work/before-after.png)
+![before-after](before-after.png)
 
 ---
 

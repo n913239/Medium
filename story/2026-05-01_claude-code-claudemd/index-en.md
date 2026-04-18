@@ -1,7 +1,7 @@
 <!-- Tags: Artificial Intelligence, Software Development, Developer Tools, Claude Code, Productivity -->
 
 *(Insert cover image: cover.png)*
-![cover](../2026-05-01_claude-code-claudemd/cover.png)
+![cover](cover.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi engineer character stands beside a tall, layered cake-like structure with three tiers. Each tier is labeled: bottom "User" (largest), middle "Project", top "Subfolder" (smallest). The structure glows softly, and a small notebook labeled "CLAUDE.md" floats beside each tier. The engineer looks up admiringly at the layered structure. Soft pastel colors (mint, peach, lavender), white background, clean and simple. 16:9 ratio.
 -->
@@ -46,7 +46,7 @@ Think of it as: **everything you'd tell a new team member on their first day.**
 Most people only know to put a single CLAUDE.md at the project root. But it actually has **three layers**:
 
 *(Insert image: table-three-layers-en.png)*
-![table-three-layers-en](../2026-05-01_claude-code-claudemd/table-three-layers-en.png)
+![table-three-layers-en](table-three-layers-en.png)
 <!--
 | Layer | Path | Scope | What to Put |
 |-------|------|-------|-------------|
@@ -79,7 +79,7 @@ Specifically:
 The only case with clear precedence is `CLAUDE.local.md` within the same directory (covered in the next section) — officially guaranteed to load after `CLAUDE.md`.
 
 *(Insert image: layer-diagram.png)*
-![layer-diagram](../2026-05-01_claude-code-claudemd/layer-diagram.png)
+![layer-diagram](layer-diagram.png)
 <!--
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration showing three floating notebook icons stacking on top of each other like layers. Bottom layer (largest) labeled "~/.claude/CLAUDE.md — Personal", middle layer labeled "project/CLAUDE.md — Project", top layer (smallest) labeled "src/api/CLAUDE.md — Subfolder". Arrows point downward showing "merge" between each layer. A chibi engineer character stands beside them looking at the merged result. Soft pastel colors, white background, clean and simple. 16:9 ratio.
 -->
@@ -210,7 +210,7 @@ Note this guarantee only applies **within the same directory**. Cross-layer conf
 Loading order summary:
 
 *(Insert image: table-priority-en.png)*
-![table-priority-en](../2026-05-01_claude-code-claudemd/table-priority-en.png)
+![table-priority-en](table-priority-en.png)
 <!--
 | Order | File | Description |
 |-------|------|-------------|
@@ -230,7 +230,7 @@ Loading order summary:
 A common question: when does Claude read CLAUDE.md? Do I need to restart after editing?
 
 *(Insert image: table-loading-en.png)*
-![table-loading-en](../2026-05-01_claude-code-claudemd/table-loading-en.png)
+![table-loading-en](table-loading-en.png)
 <!--
 | Timing | Description |
 |--------|-------------|
@@ -314,7 +314,7 @@ Claude doesn't know how your project runs tests or builds.
 This is a common pitfall — stuffing everything into CLAUDE.md until it's bloated and Claude can't find the important parts.
 
 *(Insert image: table-dont-put-en.png)*
-![table-dont-put-en](../2026-05-01_claude-code-claudemd/table-dont-put-en.png)
+![table-dont-put-en](table-dont-put-en.png)
 <!--
 | Don't Include | Why | Where Instead |
 |---------------|-----|---------------|
@@ -594,7 +594,7 @@ With CLAUDE.md, the team's Claude Code output **naturally converges**, because e
 This series has introduced several configuration approaches. Here's how they divide responsibilities:
 
 *(Insert image: table-comparison-all-en.png)*
-![table-comparison-all-en](../2026-05-01_claude-code-claudemd/table-comparison-all-en.png)
+![table-comparison-all-en](table-comparison-all-en.png)
 <!--
 | Mechanism | Nature | When Active | Typical Use |
 |-----------|--------|-------------|-------------|
