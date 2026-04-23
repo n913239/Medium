@@ -65,7 +65,7 @@ Hooks are configured in `settings.json` — either the global `~/.claude/setting
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\\.swift\"'; then swiftlint lint --quiet \"$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))\" 2>/dev/null)\"; fi"
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
           }
         ]
       }
@@ -88,25 +88,33 @@ It looks complex, but the structure is straightforward:
 
 `matcher` matches Claude Code tool names: `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, etc. Omitting `matcher` intercepts all tools.
 
-### Environment Variables
+### stdin Data Format
 
-When a Hook fires, Claude Code injects these environment variables so you know what Claude just did:
+When a Hook fires, Claude Code passes event information as JSON via **stdin** to your command. Read it with `cat`, then parse it with `jq`:
 
-- `CLAUDE_TOOL_NAME` — tool name (e.g. `Edit`)
-- `CLAUDE_TOOL_INPUT` — tool input parameters (JSON format)
-- `CLAUDE_TOOL_OUTPUT` — tool output (JSON format, PostToolUse only)
-
-The structure of `CLAUDE_TOOL_INPUT` depends on the tool. For `Edit`:
+For a `PostToolUse` + `Edit` event, the stdin JSON looks like this:
 
 ```json
 {
-  "file_path": "/Users/mike/MyApp/Sources/LoginView.swift",
-  "old_string": "...",
-  "new_string": "..."
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/path/to/file.swift",
+    "old_string": "...",
+    "new_string": "..."
+  }
 }
 ```
 
-That's why the SwiftLint example parses `CLAUDE_TOOL_INPUT` to extract `file_path`, then lints that specific file.
+To extract `file_path`:
+
+```bash
+FILE=$(cat | jq -r '.tool_input.file_path // empty')
+```
+
+That's why the SwiftLint example parses the stdin JSON to extract `file_path`, then lints that specific file.
+
+A few environment variables are also available — `CLAUDE_PROJECT_DIR` (project root), `CLAUDE_PLUGIN_ROOT`, etc. — but tool data itself only comes through stdin; there are no `CLAUDE_TOOL_INPUT`-style env vars.
 
 ### Practical Examples
 
@@ -121,7 +129,7 @@ That's why the SwiftLint example parses `CLAUDE_TOOL_INPUT` to extract `file_pat
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))\" 2>/dev/null); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
           }
         ]
       }
@@ -141,7 +149,7 @@ That's why the SwiftLint example parses `CLAUDE_TOOL_INPUT` to extract `file_pat
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"[$(date)] $CLAUDE_TOOL_INPUT\" >> ~/.claude/bash_history.log"
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty'); echo \"[$(date)] $CMD\" >> ~/.claude/bash_history.log"
           }
         ]
       }
@@ -181,7 +189,7 @@ If you have a Claude Code Telegram bot set up, you can forward notifications lik
         "hooks": [
           {
             "type": "command",
-            "command": "curl -s -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage\" -d \"chat_id=$TELEGRAM_CHAT_ID&text=$(echo $CLAUDE_NOTIFICATION | python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read()))')\" > /dev/null"
+            "command": "MSG=$(cat | jq -r '.message // empty'); curl -s -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage\" -d \"chat_id=$TELEGRAM_CHAT_ID&text=$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read()))' <<< \"$MSG\")\" > /dev/null"
           }
         ]
       }
@@ -198,7 +206,7 @@ If you have a Claude Code Telegram bot set up, you can forward notifications lik
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi Claude character is about to press a big red button labeled "rm -rf". But a small chibi guard character in a helmet steps in front, holding up a STOP sign, blocking the action. The guard looks firm but friendly. A warning sign floats nearby with "⛔ 危險指令". Soft pastel colors (mint, peach, coral, lavender), white background, clean and simple. 16:9 ratio.
 -->
 
-`PreToolUse` has a special behavior: if the hook command exits with a non-zero code, Claude Code **cancels** that tool call and feeds the hook's output back to Claude as an error message.
+`PreToolUse` has a special behavior: if the hook command exits with code **2**, Claude Code **cancels** that tool call and feeds the hook's stderr back to Claude as an error message. (Other non-zero exit codes are non-blocking errors — the tool still runs.)
 
 This lets you build a safety gatekeeper:
 
@@ -211,7 +219,7 @@ This lets you build a safety gatekeeper:
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('command',''))\" 2>/dev/null); if echo \"$CMD\" | grep -qE '(rm -rf|DROP TABLE|DELETE FROM)'; then echo '⛔ Dangerous command blocked. Please confirm and run manually.'; exit 1; fi"
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty'); if echo \"$CMD\" | grep -qE '(rm -rf|DROP TABLE|DELETE FROM)'; then echo '⛔ Dangerous command blocked. Please confirm and run manually.' >&2; exit 2; fi"
           }
         ]
       }
@@ -474,7 +482,7 @@ Walk away from your screen, do something else, and come back when the notificati
 
 **Q: What happens if a Hook command fails?**
 
-For `PostToolUse` and `Stop`, if the hook fails (non-zero exit code), Claude Code logs the error but **does not affect the main flow**. `PreToolUse` is different — a non-zero exit code blocks the tool from executing.
+For `PostToolUse` and `Stop`, if the hook fails (non-zero exit code), Claude Code logs the error but **does not affect the main flow**. For `PreToolUse`, only exit code **2** blocks the tool from executing — other non-zero exit codes are non-blocking errors and the tool still runs.
 
 **Q: Does Memory consume context window?**
 

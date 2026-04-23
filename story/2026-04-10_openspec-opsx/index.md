@@ -49,7 +49,7 @@ Gemini prompt: A cute Ghibli-inspired soft pastel illustration split into two ha
 ## 安裝
 
 ```bash
-npm install -g openspec
+npm install -g @fission-ai/openspec@latest
 openspec init
 ```
 

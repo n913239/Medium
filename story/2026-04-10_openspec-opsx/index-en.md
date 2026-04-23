@@ -46,7 +46,7 @@ The idea is simple: **agree on the spec before AI touches any code.**
 ## Installation
 
 ```bash
-npm install -g openspec
+npm install -g @fission-ai/openspec@latest
 openspec init
 ```
 
