@@ -183,7 +183,7 @@ You can scope `Bash` to specific commands — `Bash(swift *)` only allows comman
 
 ### Quick Authorization in a Conversation
 
-If you don't want to edit CLAUDE.md, you can state it at the start of a conversation:
+If you don't want to edit settings.json, you can state it at the start of a conversation:
 
 ```
 For this conversation, you can run bash commands and edit files directly
@@ -253,7 +253,7 @@ Workflow:
 |---------|---------|---------|
 | Slash Commands | Save common prompts as commands | .claude/commands/ |
 | Custom Agents | Define role-based agents with tools | .claude/agents/ |
-| allowedTools | Set tools that don't require confirmation | CLAUDE.md frontmatter |
+| permissions.allow | Set tools that don't require confirmation | .claude/settings.json |
 | Conversation auth | Temporary permission for one session | Start of conversation |
 -->
 
@@ -271,4 +271,4 @@ You don't need to set all of this up at once. Start by finding the prompt you re
 - [How Boris Uses Claude Code](https://howborisusesclaudecode.com) — Boris Cherny (Claude Code engineer at Anthropic) shares his workflow; the slash commands and custom agents practices in this article are inspired by his tips
 - [Claude Code Docs — Slash Commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands) — Full slash commands documentation
 - [Claude Code Docs — Sub-agents](https://docs.anthropic.com/en/docs/claude-code/sub-agents) — How to configure custom agents
-- [Claude Code Docs — Settings](https://docs.anthropic.com/en/docs/claude-code/settings) — allowedTools and other permission settings
+- [Claude Code Docs — Settings](https://docs.anthropic.com/en/docs/claude-code/settings) — permissions.allow and other permission settings
