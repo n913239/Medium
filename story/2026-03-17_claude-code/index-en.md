@@ -157,7 +157,7 @@ Useful commands and shortcuts:
 - `claude` — launch Claude Code
 - `/compact` — compress the conversation, free up context window
 - `/clear` — clear the conversation, start fresh
-- `Shift + Tab` — toggle Plan Mode / Act Mode
+- `Shift + Tab` — cycle permission modes (default → acceptEdits → plan)
 - `Esc` — interrupt the current operation
 - `claude -p "command"` — headless mode, useful for scripting
 
