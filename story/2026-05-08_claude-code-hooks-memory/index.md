@@ -65,7 +65,7 @@ Hooks 設定在 `settings.json`（可以是全域的 `~/.claude/settings.json`�
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\\.swift\"'; then swiftlint lint --quiet \"$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))\" 2>/dev/null)\"; fi"
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
           }
         ]
       }
@@ -88,25 +88,33 @@ Hooks 設定在 `settings.json`（可以是全域的 `~/.claude/settings.json`�
 
 `matcher` 對應的是 Claude Code 的工具名稱：`Bash`、`Edit`、`Write`、`Read`、`Glob`、`Grep` 等。不填 `matcher` 就是攔截所有工具。
 
-### 環境變數
+### stdin 資料格式
 
-Hook 執行時，Claude Code 會自動帶入這些環境變數，讓你知道 Claude 剛才做了什麼：
+Hook 執行時，Claude Code 透過 **stdin** 把事件資訊以 JSON 傳入你的指令。用 `cat` 讀取，再用 `jq` 解析：
 
-- `CLAUDE_TOOL_NAME` — 工具名稱（如 `Edit`）
-- `CLAUDE_TOOL_INPUT` — 工具的輸入參數（JSON 格式）
-- `CLAUDE_TOOL_OUTPUT` — 工具的輸出結果（JSON 格式，僅 PostToolUse）
-
-`CLAUDE_TOOL_INPUT` 的結構依工具而定。以 `Edit` 為例：
+以 `PostToolUse` + `Edit` 為例，stdin 收到的 JSON 長這樣：
 
 ```json
 {
-  "file_path": "/Users/<host>/MyApp/Sources/LoginView.swift",
-  "old_string": "...",
-  "new_string": "..."
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "/path/to/file.swift",
+    "old_string": "...",
+    "new_string": "..."
+  }
 }
 ```
 
-所以前面那個 SwiftLint 指令，是把 `CLAUDE_TOOL_INPUT` 解析出 `file_path`，再針對那個檔案跑 lint。
+讀取 `file_path`：
+
+```bash
+FILE=$(cat | jq -r '.tool_input.file_path // empty')
+```
+
+所以前面那個 SwiftLint 指令，是把 stdin JSON 解析出 `file_path`，再針對那個檔案跑 lint。
+
+另外也有幾個環境變數可用：`CLAUDE_PROJECT_DIR`（專案根目錄）、`CLAUDE_PLUGIN_ROOT` 等；但工具資料本身只走 stdin。
 
 ### 實用範例
 
@@ -121,7 +129,7 @@ Hook 執行時，Claude Code 會自動帶入這些環境變數，讓你知道 Cl
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))\" 2>/dev/null); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
+            "command": "FILE=$(cat | jq -r '.tool_input.file_path // empty'); if [[ \"$FILE\" == *.swift ]]; then swiftlint lint --quiet \"$FILE\" 2>/dev/null; fi"
           }
         ]
       }
@@ -141,7 +149,7 @@ Hook 執行時，Claude Code 會自動帶入這些環境變數，讓你知道 Cl
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"[$(date)] $CLAUDE_TOOL_INPUT\" >> ~/.claude/bash_history.log"
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty'); echo \"[$(date)] $CMD\" >> ~/.claude/bash_history.log"
           }
         ]
       }
@@ -181,7 +189,7 @@ Hook 執行時，Claude Code 會自動帶入這些環境變數，讓你知道 Cl
         "hooks": [
           {
             "type": "command",
-            "command": "curl -s -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage\" -d \"chat_id=$TELEGRAM_CHAT_ID&text=$(echo $CLAUDE_NOTIFICATION | python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read()))')\" > /dev/null"
+            "command": "MSG=$(cat | jq -r '.message // empty'); curl -s -X POST \"https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage\" -d \"chat_id=$TELEGRAM_CHAT_ID&text=$(python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read()))' <<< \"$MSG\")\" > /dev/null"
           }
         ]
       }
@@ -198,7 +206,7 @@ Hook 執行時，Claude Code 會自動帶入這些環境變數，讓你知道 Cl
 Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi Claude character is about to press a big red button labeled "rm -rf". But a small chibi guard character in a helmet steps in front, holding up a STOP sign, blocking the action. The guard looks firm but friendly. A warning sign floats nearby with "⛔ 危險指令". Soft pastel colors (mint, peach, coral, lavender), white background, clean and simple. 16:9 ratio.
 -->
 
-`PreToolUse` 有個特殊之處：如果 hook 指令的 exit code 不是 0，Claude Code 會**中止**那個工具呼叫，並把 hook 的輸出當成錯誤訊息反饋給 Claude。
+`PreToolUse` 有個特殊之處：如果 hook 指令的 exit code 為 **2**，Claude Code 會**中止**那個工具呼叫，並把 hook 的 stderr 當成錯誤訊息反饋給 Claude。（其他非 0 exit code 只是非阻擋性錯誤，不會中止工具。）
 
 這讓你可以做「安全守門員」：
 
@@ -211,7 +219,7 @@ Gemini prompt: A cute Ghibli-inspired soft pastel illustration. A chibi Claude c
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=$(echo \"$CLAUDE_TOOL_INPUT\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('command',''))\" 2>/dev/null); if echo \"$CMD\" | grep -qE '(rm -rf|DROP TABLE|DELETE FROM)'; then echo '⛔ 危險指令，已阻擋。請確認後手動執行。'; exit 1; fi"
+            "command": "CMD=$(cat | jq -r '.tool_input.command // empty'); if echo \"$CMD\" | grep -qE '(rm -rf|DROP TABLE|DELETE FROM)'; then echo '⛔ 危險指令，已阻擋。請確認後手動執行。' >&2; exit 2; fi"
           }
         ]
       }
@@ -474,7 +482,7 @@ memory: user
 
 **Q：Hooks 的 shell 指令失敗了會怎樣？**
 
-`PostToolUse` 和 `Stop` 的 hook 失敗（exit code 非 0），Claude Code 會記錄錯誤但**不會影響主要流程**。`PreToolUse` 不同，非 0 exit code 會阻擋工具執行。
+`PostToolUse` 和 `Stop` 的 hook 失敗（exit code 非 0），Claude Code 會記錄錯誤但**不會影響主要流程**。`PreToolUse` 只有 exit code **2** 才會阻擋工具執行；其他非 0 exit code 只是非阻擋性錯誤，工具仍會繼續執行。
 
 **Q：Memory 的記憶會佔掉 context 嗎？**
 
