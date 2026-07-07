@@ -558,7 +558,7 @@ Here are some lessons learned from practical use:
 
 ---
 
-## Conclusion
+## Summary
 
 CLAUDE.md solved "AI doesn't know my project conventions." Skills take it further, solving "AI doesn't know my workflow."
 

@@ -176,7 +176,7 @@ So the division of labor is one sentence: **hand the deterministic parts to CI t
 
 ---
 
-## Conclusion
+## Summary
 
 We put a lot of effort into building structure for the AI: a hook to gatekeep, agents to divide the labor, commands to converge the flow. What this article adds is — **the structure you build for the AI is itself code, and it deserves structure guarding it in turn.**
 
@@ -199,4 +199,4 @@ And "hands off" can go one step further: you don't even have to open GitHub to w
 - [ShellCheck](https://www.shellcheck.net/) — the shell static-analysis tool used in CI's second check.
 - [jq](https://jqlang.org/) — used in CI's first check to validate that `settings.json` is valid JSON.
 - claude-code-workflow — the reusable seed repo I extracted the whole workflow setup (hooks, agents, commands, permissions) into, with the CI from this article wired on top.
-- Previous in this series: [From Demos to Production — One Day Shipping a Feature with Claude Code](https://medium.com/@n913239/%E5%BE%9E-demo-%E5%88%B0-production-%E6%88%91%E7%94%A8-claude-code-%E7%94%A2%E5%87%BA%E4%B8%80%E5%80%8B%E5%8A%9F%E8%83%BD%E7%9A%84%E4%B8%80%E5%A4%A9-e609d74729a0) — the day-in-the-life of wiring the same flow together by hand
+- Previous in this series: [From Demos to Production — One Day Shipping a Feature with Claude Code](https://medium.com/@n913239/from-demos-to-production-one-day-shipping-a-feature-with-claude-code-191e757b4332) — the day-in-the-life of wiring the same flow together by hand

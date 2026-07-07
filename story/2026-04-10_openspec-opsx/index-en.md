@@ -339,7 +339,7 @@ The simple rule: **opsx pays off when your change is worth documenting, reproduc
 
 ---
 
-## Wrapping Up
+## Summary
 
 OpenSpec / opsx isn't just "have AI write your docs." It's a systematic integration of **prompt engineering** and **RAG** principles directly into your development workflow:
 

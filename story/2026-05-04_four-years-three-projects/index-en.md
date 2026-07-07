@@ -325,7 +325,7 @@ Books and courses give you vocabulary — they let you say "oh, this is called C
 
 ---
 
-## Closing
+## Summary
 
 While writing this article, I was doing something else in parallel — feeding four years of code into my personal knowledge base, mapping it concept by concept against the Essential Developer course.
 

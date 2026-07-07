@@ -347,7 +347,7 @@ class OrderViewModel {
 
 ---
 
-## Wrapping Up
+## Summary
 
 1. **Singleton isn't evil** — just use it where it actually makes sense: when one instance is genuinely all you need
 2. **Avoid global mutable state** (`static var`) — it's a bug factory

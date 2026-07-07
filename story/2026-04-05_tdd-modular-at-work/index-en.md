@@ -254,7 +254,7 @@ The course warned this phase would be uncomfortable. It was right.
 
 ---
 
-## Wrapping Up
+## Summary
 
 Applying what you've learned at work is never as clean as course examples. You're dealing with real deadlines, legacy code, and teammates with different priorities. No one will give you a week to "clean up the architecture" — improvements have to happen quietly, within everyday development.
 

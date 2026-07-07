@@ -173,7 +173,7 @@ Recommended order for engineers:
 
 ---
 
-## Wrapping Up
+## Summary
 
 Anthropic's course catalog keeps growing fast — from basic Claude usage to advanced topics like MCP and Subagents. As an engineer, I find the MCP and Subagents content the most valuable — these directly impact how much you can accomplish with Claude.
 

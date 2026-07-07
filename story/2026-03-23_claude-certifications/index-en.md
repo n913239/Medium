@@ -164,7 +164,7 @@ A few suggestions for those who want to give it a try:
 
 ---
 
-## Conclusion
+## Summary
 
 These 7 certifications cover the full journey from "getting to know Claude" to "driving AI adoption across an organization":
 

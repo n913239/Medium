@@ -122,7 +122,7 @@ After three articles, here's what holds across all 16:
 
 ---
 
-## Wrapping Up
+## Summary
 
 Across three articles and about two weeks of spare time, I worked through every official Anthropic certification that currently exists.
 

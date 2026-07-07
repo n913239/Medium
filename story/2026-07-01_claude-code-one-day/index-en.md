@@ -169,7 +169,7 @@ Open the PR, glance at CI on my phone before bed. That's one feature, one day.
 
 ---
 
-## Conclusion: Better Models Won't Save You. Structure Will.
+## Summary: Better Models Won't Save You. Structure Will.
 
 *(Insert image here: table-one-day-en.png)*
 ![table-one-day](table-one-day-en.png)
