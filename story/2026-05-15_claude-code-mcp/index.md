@@ -69,7 +69,7 @@ MCP Server 設定在 `settings.json` 的 `mcpServers` 欄位：
   "mcpServers": {
     "server-name": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/<host>/projects"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
     }
   }
 }
@@ -115,7 +115,7 @@ SSE 適合有自己部署的服務，設定多一個 `url` 欄位：
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/<host>/projects"],
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"],
       "env": {
         "SOME_API_KEY": "your_key_here"
       }
@@ -138,8 +138,8 @@ SSE 適合有自己部署的服務，設定多一個 `url` 欄位：
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Users/<host>/Documents",
-        "/Users/<host>/Downloads"
+        "/Users/you/Documents",
+        "/Users/you/Downloads"
       ]
     }
   }

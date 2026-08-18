@@ -69,7 +69,7 @@ MCP Servers are configured in the `mcpServers` field of `settings.json`:
   "mcpServers": {
     "server-name": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/<host>/projects"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
     }
   }
 }
@@ -115,7 +115,7 @@ Many servers need API keys. Pass them via the `env` field to avoid putting secre
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/<host>/projects"],
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"],
       "env": {
         "SOME_API_KEY": "your_key_here"
       }
@@ -138,8 +138,8 @@ Many servers need API keys. Pass them via the `env` field to avoid putting secre
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Users/<host>/Documents",
-        "/Users/<host>/Downloads"
+        "/Users/you/Documents",
+        "/Users/you/Downloads"
       ]
     }
   }
