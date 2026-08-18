@@ -7,3 +7,18 @@ medium-export-*/
 
 # Claude Code
 .claude/
+
+# 讀者留言與回覆草稿（含讀者姓名）
+QA.md
+
+# 題目研究筆記與雜項工作檔（只留在本機）
+backlog/
+temp.txt
+# 只擋根目錄的散落圖檔；story/ 底下的 .jpg 是文章插圖，不能擋
+/*.jpg
+
+# 去識別化樣式(含真實類名與路徑,只留本機)
+tools/mcp/medium-check/deident-patterns.txt
+
+# Python 快取
+__pycache__/

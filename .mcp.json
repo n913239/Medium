@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "medium-check": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp",
+        "python",
+        "${CLAUDE_PROJECT_DIR:-.}/tools/mcp/medium-check/server.py"
+      ],
+      "env": {}
+    }
+  }
+}

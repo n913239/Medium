@@ -1,0 +1,23 @@
+# 去識別化樣式(一行一個 regex,# 開頭為註解)
+#
+# 複製這個檔案成 deident-patterns.txt 再填入真實樣式。
+# deident-patterns.txt 已列入 .gitignore —— 檢查洩漏的工具本身不能洩漏。
+#
+# 放什麼:真實類別名、業務用語、公司名、真實路徑、
+#        以及會透露產業別的變數名(這類最容易漏)。
+#
+# 下面是格式示範,不是真實樣式:
+
+# 真實類別名(換成專案裡實際會出現的)
+# ^.*RealClassNameHere.*$
+
+# 會洩漏產業別的變數名
+# fooButton
+# barQty
+
+# 公司名 / 網域
+# example-corp
+# @example\.com\.tw
+
+# 本機絕對路徑
+# /Users/[a-z]+/
