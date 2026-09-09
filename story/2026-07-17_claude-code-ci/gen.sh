@@ -1,4 +1,7 @@
 #!/bin/bash
+# 2026-09-10:playwright 1.63 起本機沒有 headless shell,一律用 --channel=chrome
+# 走系統 Chrome。⚠️ 它的算繪與舊版 headless shell 不同,重產的 PNG 不會與
+# 已發布的位元組相同(檔案會小約 10%),已發布的文章沒事別重跑。
 cd "$(dirname "$0")"
 DIR="$(pwd)"
 
@@ -26,7 +29,7 @@ code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13p
 </script>
 </body></html>
 ENDHTML
-  npx playwright screenshot --viewport-size "${vw},100" --full-page \
+  npx playwright screenshot --channel=chrome --viewport-size "${vw},100" --full-page \
     "file://${DIR}/_${name}.html" "${DIR}/${name}.png" 2>/dev/null
   rm -f "${DIR}/_${name}.html"
   echo "✅ ${name}.png"
