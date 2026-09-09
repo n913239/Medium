@@ -22,3 +22,13 @@ tools/mcp/medium-check/deident-patterns.txt
 
 # Python 快取
 __pycache__/
+
+# iThome 鐵人賽工作檔(只留本機)
+# 大小寫全擋 —— 資料夾曾被建成 iTHome,而 Linux 上 git 比對是大小寫敏感的,
+# 漏擋就會把夥伴姓名與未發布草稿推上這個公開 repo。
+[iI][tT][hH][oO][mM][eE]/
+
+# hook 與其自測:偏本機隱私設定,和 .claude/ 同一個理由不進版控
+# (文章裡完整呈現內容;要讓讀者直接抄就把這兩行拿掉)
+scripts/deident-guard.py
+scripts/deident-guard-selftest.py

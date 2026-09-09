@@ -15,6 +15,10 @@
 - **測試／參考用的外部專案一律放 `../Github/`**(本 repo 的姊妹目錄,**不在版控內**)。要 clone 別人的 repo 來跑 graphify、寫文章實測、或單純研讀原始碼,都放這裡,不要 clone 進 `Medium/` 以免污染文章 repo。
   - 已在裡面的:`containerization/`(apple/containerization,2026-07-27 clone,HEAD `74ace148`)。
   - 寫文章引用時記得記下 **commit SHA**,讀者才能重現同樣結果。
+- **鐵人賽工作區在 `../ithome-2026/`**(private repo,與本 repo 平行,2026-09-09 從原本的 `iThome/` 搬出)。30 篇草稿、體例規範、建置排程、團隊規劃、實測腳本與圖片都在那裡。
+  - 🔒 **永遠不要改成 public** —— history 裡有未發表的 30 篇草稿,以及隊友本名(89 處,散在 6 份規劃文件)。GitHub 一按 public,整段 history 跟著公開,不可逆。
+  - 本 repo `.gitignore` 的 `iThome/` 那行**留著**,防止哪天又在 `Medium/` 底下長出一個。
+  - 實作專案 `event-signup` 是**另一個 public repo**(讀者要能 clone),不放進 `ithome-2026`。
 - **題目備存放 `backlog/`**:研究過但還沒排程的題目,一個題目一個 `.md`,格式見 `backlog/README.md`(是什麼／為什麼值得寫／可寫角度／風險／建議排程 + **查證當下日期與數據**)。決定要寫時再搬進 `story/YYYY-MM-DD_<slug>/`。
 
 ## 文章結構與慣例
