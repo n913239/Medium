@@ -106,6 +106,11 @@ python3 ~/.claude/skills/md-single-html/md_to_single_html.py index.md ~/Desktop/
 | 路徑 | 說明 |
 |---|---|
 | `~/.claude/skills/md-single-html/` | 啟用位置，`/md-single-html` 從這裡跑 |
-| `tools/skills/md-single-html/` | repo 內備份（跟 `convert-docx` 同模式，兩邊保持同步） |
+| `tools/skills/md-single-html/` | repo 內備份（跟 `convert-docx` 同模式） |
+| [Gist `7ae7d88c`](https://gist.github.com/n913239/7ae7d88cfbc51d5540201891bb1ff6f4) | 對外公開的那份，鐵人賽 Day 5 的 `curl` 指向它 |
 
-改動腳本時記得**兩邊都更新**（`~/.claude/skills/…` 是實際執行的那份）。
+改動腳本時**三個地方都要更新**（`~/.claude/skills/…` 是實際執行的那份，
+Gist 用 `gh gist edit 7ae7d88cfbc51d5540201891bb1ff6f4 -f md_to_single_html.py` 推上去）。
+
+> ⚠️ 三份來源會漂移，而漂移的時候不會有任何東西提醒你 ——
+> 這正是 Day 5 那篇在講的事。改完記得三邊 `diff` 一次。

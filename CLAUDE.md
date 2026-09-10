@@ -77,6 +77,7 @@
   - 表格圖風格:深色標題列(`#333`)+ 白底 + 淡灰分隔線;`code` 用等寬字。
 - **`skills/convert-docx`** — Markdown → Word(.docx),自動修表格框線與欄寬。
 - **`skills/md-single-html`** — 把 `index.md` 轉成**單一自帶圖片的 HTML**(圖片 base64 內嵌),方便傳給別人看。純標準庫、無第三方相依;沿用本 repo 慣例自動略過 Tags／表格原始碼／Gemini prompt 等 HTML 註解與 `*(在這裡插入圖片…)*` placeholder。可 `/md-single-html` 呼叫,或直接 `python3 ~/.claude/skills/md-single-html/md_to_single_html.py index.md`。使用教學見該資料夾的 `README.md`。
+  **對外公開版在 [Gist `7ae7d88c`](https://gist.github.com/n913239/7ae7d88cfbc51d5540201891bb1ff6f4)**(鐵人賽 Day 5 的 `curl` 指向它)—— 這支腳本共三份(`~/.claude/skills/`、本 repo、Gist),**改動要三邊同步**,漂移了不會有東西提醒你。
 - **`skills/clean-legacy`** + **`skills/clean-check`** — 清掉被註解掉的遺留碼／壓縮空行,並驗證 git diff 只動到註解。(偏程式碼清理,非寫作用。)
 
 > 註:`tools/skills/` 是這些 skill 的備份存放處。`gen-table-image` 目前未列在啟用的 skill 清單中,所以實務上用各篇的 `gen.sh` 產表格圖;其餘(convert-docx、clean-*)為可直接呼叫的 skill。
