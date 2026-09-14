@@ -13,7 +13,7 @@ user-invocable: true
 ## 前置條件
 
 - `npx playwright` 可用（不需要額外安裝 npm 套件，用 npx 即可）
-- Chromium 已透過 playwright 安裝
+- 系統已裝 Chrome:2026-09-10 起 playwright 1.63 本機沒有 headless shell,截圖一律加 `--channel=chrome` 走系統 Chrome(算繪與舊版不同,重產的 PNG 約小 10%,已發布的文章沒事別重跑)
 
 ## 解析規則
 
@@ -77,7 +77,7 @@ code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13p
    a. 將 Markdown 表格轉為 HTML
    b. 套用固定樣式產生完整 HTML 檔案
    c. 寫入暫存 HTML 檔
-   d. 用 `npx playwright screenshot --viewport-size 900,100 --full-page` 截圖
+   d. 用 `npx playwright screenshot --channel=chrome --viewport-size 900,100 --full-page` 截圖
    e. 存為 PNG 到 .md 檔案的同目錄
    f. 刪除暫存 HTML
 5. 輸出報告

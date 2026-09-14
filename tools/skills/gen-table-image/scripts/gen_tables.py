@@ -117,7 +117,10 @@ def generate_png(name, html_table, output_dir):
 
     try:
         subprocess.run(
-            ['npx', 'playwright', 'screenshot',
+            # 2026-09-10:playwright 1.63 起本機沒有 headless shell,一律用 --channel=chrome
+            # 走系統 Chrome。⚠️ 算繪與舊版 headless shell 不同,重產的 PNG 不會與已發布的
+            # 位元組相同(約小 10%),已發布的文章沒事別重跑。各篇 gen.sh 同日已改。
+            ['npx', 'playwright', 'screenshot', '--channel=chrome',
              '--viewport-size', '900,100',
              '--full-page',
              f'file://{tmp_path}',
