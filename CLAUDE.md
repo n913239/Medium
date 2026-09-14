@@ -60,7 +60,7 @@
 
 - **業務相關的類別名一律換成 stand-in**,且**跨篇要一致**(讀者要認得出是同一個東西)。已用過的對照:god node = `RecordDetailViewController`、其餘 `RequestCreateViewController` / `AssetManagementViewController` / `RecordReviewViewController` / `RequestListViewController`;抽出的 validator = `RecordValidator`。
 - **通用框架/骨架名保持原樣**:`NSObject`、`BaseViewController`、`AppCoordinator`、`LoginViewController`、UIKit delegate 等。
-- **連 code snippet 裡的變數/元件名也要換**(容易漏!):例如 `fooButton`/`barQty` 這種會透露產業(醫療/用藥)的,要改成 `optionButton`/`itemQty`。
+- **連 code snippet 裡的變數/元件名也要換**(容易漏!):例如以用途命名的 `fooButton`/`barQty` 這種會透露產業的,要改成 `optionButton`/`itemQty`。
 - **數字(行數、邊數、節點數)保留真實值**——那是度量,不具識別性,也是文章可信度來源。
 - **圖片同樣要處理**:截圖裁掉會顯示真實名稱的面板;表格 PNG 記得**改完 `gen.sh` 要重新產圖**(PNG 是讀者唯一看得到的,漏改就等於沒去識別化)。
 - 文章裡放一段**去識別化聲明**(參考 0807 的寫法:哪些換了、哪些沒換、數字是真的)。
