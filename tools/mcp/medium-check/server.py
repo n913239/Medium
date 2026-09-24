@@ -202,7 +202,10 @@ def check_deident(text: str, lang: str, pats: list[str]) -> Check:
             True,
             f"跳過:{DEIDENT_FILE.name} 不存在(複製 .example 並填入樣式後才會檢查)",
         )
-    hits = [p for p in pats if re.search(p, text, re.IGNORECASE)]
+    # 樣式含大寫字母 → 區分大小寫(否則 WAS 會命中英文的 was、/Users/ 會命中網址裡的 /users/);
+    # 全小寫的樣式才不分大小寫,讓 bscloud 也抓得到 BSCloud。
+    hits = [p for p in pats
+            if re.search(p, text, 0 if re.search(r"[A-Z]", p) else re.IGNORECASE)]
     return Check(
         f"deident[{lang}]",
         not hits,
