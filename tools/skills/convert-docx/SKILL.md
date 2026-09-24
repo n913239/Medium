@@ -3,6 +3,7 @@ name: convert-docx
 description: 將 Markdown 轉為 Word (.docx)，自動修正表格框線與欄寬。支援指定檔案路徑或自動偵測當前目錄的 .md 檔案。
 argument-hint: <md-file-path>
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # Markdown 轉 Word（含表格框線修正）
