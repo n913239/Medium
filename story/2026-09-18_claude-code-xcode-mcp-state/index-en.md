@@ -391,6 +391,8 @@ One last note on shelf life: **27's improvements are still in beta 5 (`27A5237l`
 
 If you take one thing from these two articles: **when you wire up a set of agent tools, first find out what state you cannot see, and how it talks when it fails.** What it can do turns out to be the part you need to worry about least.
 
+Separately, I'm in the middle of my third iThome Ironman contest, a Taiwanese writing challenge of one technical article a day for 30 days (September 15 to October 14, in Chinese). What the contest is and how I used AI to plan it is in [Nine Years, Three Ironman Contests: From Setting Up Cloud Servers to Not Trusting AI Blindly](https://medium.com/@n913239/nine-years-three-ironman-contests-414110a72011).
+
 ---
 
 ## References
@@ -401,3 +403,4 @@ If you take one thing from these two articles: **when you wire up a set of agent
 - [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) — a third-party alternative driving the `xcodebuild` CLI: stateless, no Xcode required
 - Earlier in this series: [Xcode's Built-In MCP, Tested: It Reported 163 Tests Passing While the Project Would Not Compile](https://medium.com/p/fa3d8e6591b3) — how the same toolset reports failure, and the fake 163-passed report
 - Earlier in this series: [Building My Own MCP Server — 237 Lines, and on Its First Run It Found Something I Leaked Three Months Ago](https://medium.com/@n913239/building-my-own-mcp-server-237-lines-and-on-its-first-run-it-found-something-i-leaked-three-a50cb522624e) — the stateless stdio server this compares against, and the `.mcp.json` pending-approval supply-chain boundary
+- Later in this series: [Nine Years, Three Ironman Contests: From Setting Up Cloud Servers to Not Trusting AI Blindly](https://medium.com/@n913239/nine-years-three-ironman-contests-414110a72011) — what the iThome Ironman contest is, and how I used AI to plan this year's entry
