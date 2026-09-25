@@ -391,6 +391,8 @@ but the range of supported deployment target versions is 15.0 to 27.0.x.
 
 如果要從這兩篇挑一件事帶走:**接一套 agent 工具的時候,先去弄清楚它有哪些狀態是你看不到的,以及它失敗的時候會怎麼講。** 能做什麼,反而是最不需要擔心的那部分。
 
+另外,我目前正在參加第三次 iThome 鐵人賽:9/15 到 10/14,每天一篇,系列叫「盡信 Claude,不如無 Code — 心法與全端實戰」。這個比賽是什麼、這次怎麼讓 AI 幫我規劃,寫在[九年、三屆鐵人賽:從教人開雲端主機,到教人別全信 AI](https://medium.com/@n913239/%E4%B9%9D%E5%B9%B4-%E4%B8%89%E5%B1%86%E9%90%B5%E4%BA%BA%E8%B3%BD-%E5%BE%9E%E6%95%99%E4%BA%BA%E9%96%8B%E9%9B%B2%E7%AB%AF%E4%B8%BB%E6%A9%9F-%E5%88%B0%E6%95%99%E4%BA%BA%E5%88%A5%E5%85%A8%E4%BF%A1-ai-4e25dfa99132)。
+
 ---
 
 ## 參考資料
@@ -401,3 +403,4 @@ but the range of supported deployment target versions is 15.0 to 27.0.x.
 - [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) — 走 `xcodebuild` CLI 的第三方替代方案,無狀態、不需開 Xcode
 - 系列前篇:[Xcode 內建 MCP 實測:它回報 163 個測試全過,而專案根本編不起來](https://medium.com/p/d13ae9fabb7a) — 同一套工具怎麼報告失敗,以及那份假的 163 passed 報表
 - 系列前篇:[自己做一個 MCP server:237 行,第一次跑就抓到我三個月前洩漏的東西](https://medium.com/@n913239/%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%80%E5%80%8B-mcp-server-237-%E8%A1%8C-%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B7%91%E5%B0%B1%E6%8A%93%E5%88%B0%E6%88%91%E4%B8%89%E5%80%8B%E6%9C%88%E5%89%8D%E6%B4%A9%E6%BC%8F%E7%9A%84%E6%9D%B1%E8%A5%BF-921040a17e7b) — 無狀態 stdio server 的對照組,以及 `.mcp.json` 待核准那條供應鏈邊界
+- 系列後篇:[九年、三屆鐵人賽:從教人開雲端主機,到教人別全信 AI](https://medium.com/@n913239/%E4%B9%9D%E5%B9%B4-%E4%B8%89%E5%B1%86%E9%90%B5%E4%BA%BA%E8%B3%BD-%E5%BE%9E%E6%95%99%E4%BA%BA%E9%96%8B%E9%9B%B2%E7%AB%AF%E4%B8%BB%E6%A9%9F-%E5%88%B0%E6%95%99%E4%BA%BA%E5%88%A5%E5%85%A8%E4%BF%A1-ai-4e25dfa99132) — iThome 鐵人賽是什麼,以及這次怎麼讓 AI 幫我規劃
