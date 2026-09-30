@@ -148,6 +148,8 @@ Many servers need API keys. Pass them via the `env` field to avoid putting secre
 
 Once configured, Claude can read and write any directory you specify — including locations outside Claude Code's working directory. Read config files from another repo, inspect a CSV in Downloads — no manual copy-pasting required.
 
+> Note: Claude can read and write everything under the directories you list. The example uses all of Documents and Downloads for illustration; in practice, list only the subdirectories you actually need.
+
 ### 2. GitHub — Search Issues, Read PRs, Query Repos
 
 GitHub has migrated its official MCP server to a standalone repo, now distributed as a Docker image (Docker must be installed):

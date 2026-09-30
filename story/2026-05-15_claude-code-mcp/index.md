@@ -148,6 +148,8 @@ SSE 適合有自己部署的服務，設定多一個 `url` 欄位：
 
 設定好之後，Claude 可以直接讀寫你指定的目錄——包括 Claude Code 工作目錄以外的地方。例如讀取另一個 repo 的設定檔、查看 Downloads 裡的 CSV，都不用你先手動貼進來。
 
+> 注意：列進去的目錄，Claude 都能讀也能寫。範例為了示範放了整個 Documents 和 Downloads，實際使用時只列真正需要的子目錄。
+
 ### 2. GitHub — 搜尋 issues、讀 PR、查 repo
 
 GitHub 官方已將 MCP server 遷移至獨立 repo，改以 Docker 方式執行（需先安裝 Docker）：
