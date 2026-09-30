@@ -202,7 +202,7 @@ def check_deident(text: str, lang: str, pats: list[str]) -> Check:
             True,
             f"跳過:{DEIDENT_FILE.name} 不存在(複製 .example 並填入樣式後才會檢查)",
         )
-    # 樣式含大寫字母 → 區分大小寫(否則 全大寫的專案代號會命中同拼法的英文單字、/Users/ 會命中網址裡的 /users/);
+    # 樣式含大寫字母 → 區分大小寫(否則全大寫的專案代號會命中同拼法的英文單字、/Users/ 會命中網址裡的 /users/);
     # 全小寫的樣式才不分大小寫,讓 acme 也抓得到 ACME。
     hits = [p for p in pats
             if re.search(p, text, 0 if re.search(r"[A-Z]", p) else re.IGNORECASE)]
