@@ -33,3 +33,6 @@ __pycache__/
 # (文章裡完整呈現內容;要讓讀者直接抄就把這兩行拿掉)
 scripts/deident-guard.py
 scripts/deident-guard-selftest.py
+
+# 各篇文章的寫作大綱(工作檔,不進版控)
+story/*/OUTLINE.md
