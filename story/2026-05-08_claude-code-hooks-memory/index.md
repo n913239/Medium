@@ -158,6 +158,8 @@ FILE=$(cat | jq -r '.tool_input.file_path // empty')
 }
 ```
 
+> 注意：這個 log 會原封不動記下每一條指令。指令裡如果帶了 token（例如 `curl -H "Authorization: ..."`），也會以明文留在檔案裡，記得定期清理，也不要把它放進 git。
+
 **3. Claude 完成時發桌面通知（macOS）**
 
 ```json
@@ -197,6 +199,8 @@ FILE=$(cat | jq -r '.tool_input.file_path // empty')
   }
 }
 ```
+
+> 注意：通知內容會送到 Telegram 的伺服器，訊息裡可能帶檔名或程式片段。bot token 放在環境變數，不要寫死在 settings.json。
 
 ### PreToolUse：在 Claude 動手之前介入
 

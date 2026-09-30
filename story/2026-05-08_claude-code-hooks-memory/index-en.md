@@ -158,6 +158,8 @@ A few environment variables are also available — `CLAUDE_PROJECT_DIR` (project
 }
 ```
 
+> Note: this log records every command as-is. If a command carries a token (for example `curl -H "Authorization: ..."`), the token ends up in the file in plain text. Clean it up regularly and keep it out of git.
+
 **3. Desktop notification when Claude finishes (macOS)**
 
 ```json
@@ -197,6 +199,8 @@ If you have a Claude Code Telegram bot set up, you can forward notifications lik
   }
 }
 ```
+
+> Note: the notification text goes to Telegram's servers and may include file names or code snippets. Keep the bot token in an environment variable, not hard-coded in settings.json.
 
 ### PreToolUse: Intercept Before Claude Acts
 
