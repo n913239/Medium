@@ -26,7 +26,7 @@ __pycache__/
 
 # iThome 鐵人賽工作檔(只留本機)
 # 大小寫全擋 —— 資料夾曾被建成 iTHome,而 Linux 上 git 比對是大小寫敏感的,
-# 漏擋就會把夥伴姓名與未發布草稿推上這個公開 repo。
+# 漏擋就會把私有工作檔推上這個公開 repo。
 [iI][tT][hH][oO][mM][eE]/
 
 # hook 與其自測:偏本機隱私設定,和 .claude/ 同一個理由不進版控
@@ -36,3 +36,6 @@ scripts/deident-guard-selftest.py
 
 # 各篇文章的寫作大綱(工作檔,不進版控)
 story/*/OUTLINE.md
+
+# 安全/隱私稽核報告(含命中的敏感字串,只留本機)
+audit/
