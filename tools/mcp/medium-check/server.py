@@ -2,7 +2,7 @@
 """medium-check — 把這個 repo 的發布前檢查清單做成 MCP server。
 
 規格來源:CLAUDE.md「發布流程」第 3 條。
-執行:uv run --with mcp python server.py
+執行:uv run --with mcp==2.2.0 python server.py(版本與 .mcp.json 一致)
 """
 
 from __future__ import annotations
@@ -262,8 +262,9 @@ def check_article(article: str) -> dict:
         failed: 未通過的檢查數
         checks: 每一項的 name / ok / detail
     """
-    d = STORY / article
-    if not d.is_dir():
+    d = (STORY / article).resolve()
+    # article 來自呼叫端,擋掉 ../ 跳出 story/ 的路徑
+    if not d.is_relative_to(STORY.resolve()) or not d.is_dir():
         return {"error": f"找不到文章資料夾:{d}"}
 
     zh_path, en_path = d / "index.md", d / "index-en.md"

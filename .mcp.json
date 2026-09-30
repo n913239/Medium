@@ -6,7 +6,7 @@
       "args": [
         "run",
         "--with",
-        "mcp",
+        "mcp==2.2.0",
         "python",
         "${CLAUDE_PROJECT_DIR:-.}/tools/mcp/medium-check/server.py"
       ],
