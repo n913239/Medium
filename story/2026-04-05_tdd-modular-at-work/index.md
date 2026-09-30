@@ -23,7 +23,7 @@
 
 ## 專案背景
 
-這是一套企業員工管理系統的 iOS App，功能涵蓋請假申請、推播通知、出勤管理、出差申請、費用報銷等模組，不同的客戶端設定共用同一套架構基礎。
+這是一套企業內部流程管理的 iOS App，功能涵蓋表單申請、推播通知、紀錄查詢等模組，不同的客戶端設定共用同一套架構基礎。
 
 課程前的狀態：
 
@@ -40,16 +40,16 @@
 
 課程強調：ViewController 裡往往藏著未被測試的商業邏輯。重點不是「不要在 VC 裡放邏輯」，而是「無論邏輯在哪裡，都要測試它」。
 
-在請假管理模組中，判斷某筆假單是否可以編輯，有一條時間窗口規則。課程前，這個邏輯藏在 `tableView(_:canEditRowAt:)` 裡——沒有名字、沒有測試，悄悄地影響著使用者行為。
+在申請單管理模組中，判斷某筆申請單是否可以編輯，有一條時間窗口規則。課程前，這個邏輯藏在 `tableView(_:canEditRowAt:)` 裡——沒有名字、沒有測試，悄悄地影響著使用者行為。
 
 課程後，我把這個邏輯提取成獨立方法，並先寫測試：
 
 ```swift
-class LeaveListVCBusinessLogicTests: XCTestCase {
-    var sut: LeaveListViewController!
+class RequestListVCBusinessLogicTests: XCTestCase {
+    var sut: RequestListViewController!
 
     override func setUp() {
-        sut = LeaveListViewController()
+        sut = RequestListViewController()
     }
 
     func test_setupCellCanEdit_withinEditWindow_returnsTrue() {
@@ -240,7 +240,7 @@ final class AppCoordinator: Coordinator {
 ViewController 現在只負責自己的畫面邏輯，不再需要知道 App 的下一步是什麼。Navigation 邏輯可以被獨立測試；VC 也因為少了這個依賴而更容易測試、更容易替換。
 
 *(在這裡插入圖片：coordinator-flow.png)*
-<!-- Gemini prompt: A warm Ghibli-inspired illustration. A chibi character in work clothes stands at the center, holding a conductor's baton like an orchestra conductor, coordinating smaller chibi characters around them. The central character is labeled "AppCoordinator". The surrounding characters are labeled "LoginCoordinator", "TabCoordinator", "LoginViewController", and "LeaveViewController", connected by softly glowing lines. The ViewController characters focus only on their own task cards and don't need to look at anyone else. Warm beige background, cheerful and relaxed atmosphere. Soft pastel colors, white background, 16:9 ratio. -->
+<!-- Gemini prompt: A warm Ghibli-inspired illustration. A chibi character in work clothes stands at the center, holding a conductor's baton like an orchestra conductor, coordinating smaller chibi characters around them. The central character is labeled "AppCoordinator". The surrounding characters are labeled "LoginCoordinator", "TabCoordinator", "LoginViewController", and "RequestCreateViewController", connected by softly glowing lines. The ViewController characters focus only on their own task cards and don't need to look at anyone else. The task cards show only generic forms (a login form, and a simple form with a "Submit" button); no other words on the cards. Warm beige background, cheerful and relaxed atmosphere. Soft pastel colors, white background, 16:9 ratio. -->
 
 ---
 
@@ -281,4 +281,4 @@ ViewController 現在只負責自己的畫面邏輯，不再需要知道 App 的
 
 本文的核心概念（TDD、領域建模、TestDouble、Coordinator Pattern、依賴注入）源自 **[iOS Lead Essentials](https://www.essentialdeveloper.com/ios-lead-essentials)** 課程。
 
-文章中的程式碼範例（`LeaveListViewController`、`UserDefaultsUtilities`、`NavigationControllerMock`、`AppCoordinator` 等）源自本人實際工作專案，依課程概念重構後去識別化呈現。
+文章中的程式碼範例（`RequestListViewController`、`UserDefaultsUtilities`、`NavigationControllerMock`、`AppCoordinator` 等）源自本人實際工作專案，依課程概念重構後去識別化呈現。

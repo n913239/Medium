@@ -23,7 +23,7 @@ This article documents how I incrementally applied TDD, domain modeling, and mod
 
 ## Project Background
 
-This is an enterprise employee management iOS app, covering modules for leave requests, push notifications, attendance tracking, business trips, and expense reimbursement. Multiple client configurations share a common architecture.
+This is an enterprise internal-workflow iOS app, covering modules for form requests, push notifications, and record lookup. Multiple client configurations share a common architecture.
 
 State before the course:
 
@@ -40,16 +40,16 @@ This isn't unusual. It's what most real-world projects look like.
 
 The course makes it clear: ViewControllers often hide untested business logic. The point isn't "don't put logic in VCs" — it's "wherever the logic lives, test it."
 
-In the leave management module, whether a leave record is editable depends on a time window rule. Before TDD, this logic was buried inside `tableView(_:canEditRowAt:)` — unnamed, untested, silently affecting user behavior.
+In the request management module, whether a request record is editable depends on a time window rule. Before TDD, this logic was buried inside `tableView(_:canEditRowAt:)` — unnamed, untested, silently affecting user behavior.
 
 After the course, I extracted it into a dedicated method and wrote the tests first:
 
 ```swift
-class LeaveListVCBusinessLogicTests: XCTestCase {
-    var sut: LeaveListViewController!
+class RequestListVCBusinessLogicTests: XCTestCase {
+    var sut: RequestListViewController!
 
     override func setUp() {
-        sut = LeaveListViewController()
+        sut = RequestListViewController()
     }
 
     func test_setupCellCanEdit_withinEditWindow_returnsTrue() {
@@ -277,4 +277,4 @@ Thanks for reading. If you're also working on bringing course learnings back to 
 
 The core concepts in this article — TDD, domain modeling, TestDouble, Coordinator Pattern, and dependency injection — are sourced from the **[iOS Lead Essentials](https://www.essentialdeveloper.com/ios-lead-essentials)** course.
 
-The code examples (`LeaveListViewController`, `UserDefaultsUtilities`, `NavigationControllerMock`, `AppCoordinator`, etc.) are drawn from real work projects, refactored according to course principles and de-identified for publication.
+The code examples (`RequestListViewController`, `UserDefaultsUtilities`, `NavigationControllerMock`, `AppCoordinator`, etc.) are drawn from real work projects, refactored according to course principles and de-identified for publication.
