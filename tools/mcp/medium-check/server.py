@@ -166,6 +166,32 @@ def check_images(path: Path, lines: list[str], lang: str) -> list[Check]:
     return out
 
 
+def check_rules(lines: list[str], lang: str) -> Check:
+    """每個 H2 前面一條 `---`:系列從 0317 起的排版慣例。
+
+    只檢查「每個 H2 前面有沒有」,不檢查總數相等 ——
+    有 9 篇舊文在別處也用了水平線(12 條 vs 11 個 H2),那不是錯。
+    一定要走 strip_fences:正文會示範水平線,也會有 `--- stdout ---` 這種分隔。
+    """
+    body = [t.strip() for _, t in strip_fences(lines)]
+    missing = []
+    for i, text in enumerate(body):
+        if not text.startswith("## "):
+            continue
+        # 往回跳過空行,看前一個非空行是不是 ---
+        j = i - 1
+        while j >= 0 and body[j] == "":
+            j -= 1
+        if j < 0 or body[j] != "---":
+            missing.append(text.removeprefix("## ").strip())
+    return Check(
+        f"rules[{lang}]",
+        not missing,
+        "每個 H2 前都有 ---" if not missing
+        else f"{len(missing)} 個 H2 前面少了 ---:{', '.join(missing[:4])}",
+    )
+
+
 def check_closing(lines: list[str], lang: str) -> Check:
     h2 = headings(lines, 2)
     want = ["總結", "參考資料"] if lang == "zh" else ["Summary", "References"]
@@ -289,6 +315,7 @@ def check_article(article: str) -> dict:
         checks.append(check_fences(lines, lang))
         checks.extend(check_images(path, lines, lang))
         checks.append(check_closing(lines, lang))
+        checks.append(check_rules(lines, lang))
         checks.append(check_placeholders(lines, lang))
         checks.append(check_deident(text, lang, pats))
     checks.append(check_fullwidth(zh))
