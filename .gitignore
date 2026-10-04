@@ -39,3 +39,7 @@ story/*/OUTLINE.md
 
 # 安全/隱私稽核報告(含命中的敏感字串,只留本機)
 audit/
+
+# mod 的型別與 tsconfig 由引擎每次載入時產生,不進版控
+story/*/*/.claude-plugin/types/
+story/*/*/tsconfig.json

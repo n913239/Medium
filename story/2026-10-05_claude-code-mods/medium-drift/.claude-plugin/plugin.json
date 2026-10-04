@@ -1,0 +1,14 @@
+{
+  "name": "medium-drift",
+  "version": "0.1.0",
+  "description": "用地端模型逐節比對中英兩版有沒有論點漂移。只在你按 /check-drift 時跑。",
+  "author": { "name": "n913239", "email": "n913239@gmail.com" },
+  "userConfig": {
+    "model": {
+      "type": "string",
+      "title": "地端模型",
+      "description": "交給 lm 的模型名;留空用 lm 的預設",
+      "default": ""
+    }
+  }
+}

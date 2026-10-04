@@ -1,0 +1,10 @@
+{
+  "name": "medium-band",
+  "version": "0.1.0",
+  "description": "發文前檢查常駐在 prompt 上方,/check 不花 token 直接跑。只讀檔,不開 process。",
+  "author": {
+    "name": "n913239",
+    "email": "n913239@gmail.com"
+  },
+  "types": "./types/index.d.ts"
+}
