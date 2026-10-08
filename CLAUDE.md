@@ -19,7 +19,8 @@
   - 🔒 **永遠不要改成 public**(理由見 `CLAUDE.local.md`)。GitHub 一按 public,整段 history 跟著公開,不可逆。
   - 本 repo `.gitignore` 的 `iThome/` 那行**留著**,防止哪天又在 `Medium/` 底下長出一個。
   - 實作專案 `event-signup` 是**另一個 public repo**(讀者要能 clone),不放進 `ithome-2026`。
-- **題目備存放 `backlog/`**:研究過但還沒排程的題目,一個題目一個 `.md`,格式見 `backlog/README.md`(是什麼／為什麼值得寫／可寫角度／風險／建議排程 + **查證當下日期與數據**)。決定要寫時再搬進 `story/YYYY-MM-DD_<slug>/`。
+- **題目備存放 `backlog/`**:研究過但還沒排程的題目,一個題目一個 `.md`,格式見 `backlog/README.md`(是什麼／為什麼值得寫／可寫角度／風險／建議排程 + **查證當下日期與數據**)。決定要寫時搬進 `story/YYYY-MM-DD_<slug>/`,並**回 `backlog/README.md` 的表格標記「已消化 → 哪個資料夾」**(沒標記就會忘了哪些題目用掉了)。
+- **實測的原始資料放 `backlog/<topic>-data/`**(`backlog/` 整個已 gitignore)。文章裡每個數字都要能回查:原始輸出、跑測腳本、以及**跑之前就定死的題目與標準答案**都留在那裡。已有的:`humanizer-data/`、`architecture-ab-data/`。
 
 ## 文章結構與慣例
 
@@ -94,20 +95,24 @@
 
 1. 在 `story/YYYY-MM-DD_<slug>/` 寫 `index.md` + `index-en.md`。
 2. 依 HTML comment 裡的 Gemini prompt 生封面／插圖;跑 `gen.sh` 產表格 PNG(中英)。
-3. **貼文前檢查(逐項跑過)**:
-   - 圖檔齊全:每個 `![](x.png)` 引用的檔案都存在;英文版指向 `-en` 版本的圖
-   - **圖片數 == 「插入圖片」提示行數**(中英各自檢查)
-   - code fence 平衡(偶數)、H2 章節數**中英相同**、Tags ≤ 5
-   - 收尾標題正確(總結/參考資料、Summary/References)
-   - 殘留 `TODO`／`待補`／`(Medium 網址)` 佔位符 = 0
-   - 去識別化:真實類名、業務用語、真實路徑、公司名皆為 0(**含表格 PNG 內的文字**)
+3. **貼文前檢查**。先跑 **`medium-check` 的 `check_article`**(MCP,`.mcp.json` 已設,實作在 `tools/mcp/medium-check/`),它涵蓋:
+   - Tags ≤ 5、code fence 偶數、佔位符(`TODO`／`待補`／`(Medium 網址)`)= 0
+   - 圖檔都存在、**圖片數 == 「插入圖片」提示行數**、英文版指向 `-en` 版本的圖
+   - 收尾標題正確(總結／參考資料、Summary／References)
+   - **每個 H2 前面一條 `---`**、中英的 H2／H3／圖片數對齊
+   - 中文版無全形標點、去識別化 18 條樣式(中英兩版 + `gen.sh`)
+
+   ⚠️ **改過 `server.py` 之後要重連 MCP**,否則跑的是舊行程(2026-10-08 遇過:`rules` 檢查 10/04 就加了,當天的 session 從頭到尾沒跑到)。
+
+   **工具不管、要自己查的**:
    - 站內連結用實際網址且中英各自指向對應語言版;外部連結有效
-   - 中文版無全形標點
+   - **表格 PNG 內的文字**也要過去識別化(改完 `gen.sh` 記得重新產圖)
    - **英文版跑 `humanizer` 診斷(只診斷、不讓它改檔)**:抓 AI 腔,特別是聽起來好聽但沒資訊的比喻。
      2026-09 0828 英文版被 Medium 推廣後,3 則留言批評 AI 腔(最高 42 掌、1 人封鎖作者)——結構檢查全過不代表文字沒問題。
      英文版直接用平實英文寫,不要逐句翻中文的修辭。
 4. 用 `tools/md-to-medium.html` 轉換後貼到 Medium(貼完掃一眼 code block／JSON 有沒有跑掉;**刪掉 `*(在這裡插入圖片…)*` 提示行**)。
-   - **按下發布前先設好 custom URL**:三點選單 → More settings → Advanced settings → 勾 Custom,英文版填英文 slug。
+   - **按下發布前先設好 custom URL**:三點選單 → More settings → Advanced settings → 勾 Custom。
+     **英文版的 slug 與這段設定路徑,直接寫在 `index-en.md` 最上面的 HTML 註解裡**(版控檔,下次自動看得到,不必再想一次);中文版不用設,Medium 會依標題自動產。
      **發布後就永遠改不了了**(改標題也不會更新 slug),唯一的補救是刪掉重貼,而那會換掉 hex ID——所有既有連結與統計一起消失。
    - **貼完立刻點進去確認語言版本正確**(掃一眼標題與第一段);中英兩篇分開貼,最容易貼錯的就是這一步。
    - 文章若曾刪掉重發,**hex ID 會變**,記得回頭更新所有引用它的文章。
