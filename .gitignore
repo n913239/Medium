@@ -43,3 +43,9 @@ audit/
 # mod 的型別與 tsconfig 由引擎每次載入時產生,不進版控
 story/*/*/.claude-plugin/types/
 story/*/*/tsconfig.json
+
+# 生圖原檔備份(JPEG 轉 PNG 後的原檔)
+.bak-img/
+
+# 文章修改建議(外部審稿,不進版控)
+suggestions/
