@@ -33,7 +33,7 @@ BuildProject → {"buildResult":"The project built successfully.",
 
 **What decided whether the agent succeeded was a choice a human left in a GUI dropdown.** And on Xcode 26.3 the agent can neither read that choice nor change it — none of the 20 tools in 26.3 has anything to do with the run destination.
 
-[The previous article](https://medium.com/p/fa3d8e6591b3) was about how it reports failure. This one is about how it gets there: **this toolset is stateful, and the state is not on the agent's side.**
+[The previous article](https://medium.com/@n913239/xcodes-built-in-mcp-tested-it-reported-163-tests-passing-while-the-project-would-not-compile-fa3d8e6591b3) was about how it reports failure. This one is about how it gets there: **this toolset is stateful, and the state is not on the agent's side.**
 
 ---
 
@@ -401,6 +401,6 @@ Separately, I'm in the middle of my third iThome Ironman contest, a Taiwanese wr
 - [Model Context Protocol](https://modelcontextprotocol.io/) — the spec and the stdio transport
 - [fatbobman — Xcode 26.3 and Claude](https://fatbobman.com/en/posts/xcode-263-claude/) — the full setup-and-features introduction
 - [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) — a third-party alternative driving the `xcodebuild` CLI: stateless, no Xcode required
-- Earlier in this series: [Xcode's Built-In MCP, Tested: It Reported 163 Tests Passing While the Project Would Not Compile](https://medium.com/p/fa3d8e6591b3) — how the same toolset reports failure, and the fake 163-passed report
+- Earlier in this series: [Xcode's Built-In MCP, Tested: It Reported 163 Tests Passing While the Project Would Not Compile](https://medium.com/@n913239/xcodes-built-in-mcp-tested-it-reported-163-tests-passing-while-the-project-would-not-compile-fa3d8e6591b3) — how the same toolset reports failure, and the fake 163-passed report
 - Earlier in this series: [Building My Own MCP Server — 237 Lines, and on Its First Run It Found Something I Leaked Three Months Ago](https://medium.com/@n913239/building-my-own-mcp-server-237-lines-and-on-its-first-run-it-found-something-i-leaked-three-a50cb522624e) — the stateless stdio server this compares against, and the `.mcp.json` pending-approval supply-chain boundary
 - Later in this series: [Nine Years, Three Ironman Contests: From Setting Up Cloud Servers to Not Trusting AI Blindly](https://medium.com/@n913239/nine-years-three-ironman-contests-414110a72011) — what the iThome Ironman contest is, and how I used AI to plan this year's entry

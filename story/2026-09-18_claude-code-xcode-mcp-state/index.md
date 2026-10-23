@@ -33,7 +33,7 @@ BuildProject → {"buildResult":"The project built successfully.",
 
 **決定 agent 成敗的,是一個人類在 GUI 下拉選單裡留下的選擇。** 而在 Xcode 26.3 上,agent 既讀不到這個選擇,也改不了它——26.3 那 20 支工具裡,沒有任何一支跟 run destination 有關。
 
-[上一篇](https://medium.com/p/d13ae9fabb7a)談的是它怎麼報告失敗。這篇談它為什麼會走到失敗:**這套工具有狀態,而狀態不在 agent 這一側。**
+[上一篇](https://medium.com/@n913239/xcode-%E5%85%A7%E5%BB%BA-mcp-%E5%AF%A6%E6%B8%AC-%E5%AE%83%E5%9B%9E%E5%A0%B1-163-%E5%80%8B%E6%B8%AC%E8%A9%A6%E5%85%A8%E9%81%8E-%E8%80%8C%E5%B0%88%E6%A1%88%E6%A0%B9%E6%9C%AC%E7%B7%A8%E4%B8%8D%E8%B5%B7%E4%BE%86-d13ae9fabb7a)談的是它怎麼報告失敗。這篇談它為什麼會走到失敗:**這套工具有狀態,而狀態不在 agent 這一側。**
 
 ---
 
@@ -401,6 +401,6 @@ but the range of supported deployment target versions is 15.0 to 27.0.x.
 - [Model Context Protocol 官方站](https://modelcontextprotocol.io/) — 協定規格與 stdio transport
 - [fatbobman — Xcode 26.3 與 Claude](https://fatbobman.com/en/posts/xcode-263-claude/) — 設定與功能的完整介紹
 - [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) — 走 `xcodebuild` CLI 的第三方替代方案,無狀態、不需開 Xcode
-- 系列前篇:[Xcode 內建 MCP 實測:它回報 163 個測試全過,而專案根本編不起來](https://medium.com/p/d13ae9fabb7a) — 同一套工具怎麼報告失敗,以及那份假的 163 passed 報表
+- 系列前篇:[Xcode 內建 MCP 實測:它回報 163 個測試全過,而專案根本編不起來](https://medium.com/@n913239/xcode-%E5%85%A7%E5%BB%BA-mcp-%E5%AF%A6%E6%B8%AC-%E5%AE%83%E5%9B%9E%E5%A0%B1-163-%E5%80%8B%E6%B8%AC%E8%A9%A6%E5%85%A8%E9%81%8E-%E8%80%8C%E5%B0%88%E6%A1%88%E6%A0%B9%E6%9C%AC%E7%B7%A8%E4%B8%8D%E8%B5%B7%E4%BE%86-d13ae9fabb7a) — 同一套工具怎麼報告失敗,以及那份假的 163 passed 報表
 - 系列前篇:[自己做一個 MCP server:237 行,第一次跑就抓到我三個月前洩漏的東西](https://medium.com/@n913239/%E8%87%AA%E5%B7%B1%E5%81%9A%E4%B8%80%E5%80%8B-mcp-server-237-%E8%A1%8C-%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%B7%91%E5%B0%B1%E6%8A%93%E5%88%B0%E6%88%91%E4%B8%89%E5%80%8B%E6%9C%88%E5%89%8D%E6%B4%A9%E6%BC%8F%E7%9A%84%E6%9D%B1%E8%A5%BF-921040a17e7b) — 無狀態 stdio server 的對照組,以及 `.mcp.json` 待核准那條供應鏈邊界
 - 系列後篇:[九年、三屆鐵人賽:從教人開雲端主機,到教人別全信 AI](https://medium.com/@n913239/%E4%B9%9D%E5%B9%B4-%E4%B8%89%E5%B1%86%E9%90%B5%E4%BA%BA%E8%B3%BD-%E5%BE%9E%E6%95%99%E4%BA%BA%E9%96%8B%E9%9B%B2%E7%AB%AF%E4%B8%BB%E6%A9%9F-%E5%88%B0%E6%95%99%E4%BA%BA%E5%88%A5%E5%85%A8%E4%BF%A1-ai-4e25dfa99132) — iThome 鐵人賽是什麼,以及這次怎麼讓 AI 幫我規劃
