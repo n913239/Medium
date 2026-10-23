@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chunking, illustrated: one note becomes 30 cards</title>
+<meta name="description" content="An interactive illustration of RAG chunking, companion to the Medium post on running RAG over my own notes.">
+<style>
+:root{
+  --bg:#f7f5f0; --panel:#ffffff; --ink:#1d2a44; --muted:#6b7385; --line:#d9dce3;
+  --blue:#5b7fd6; --blue-soft:#dfe7fb; --green:#4fa77a; --green-soft:#dcf1e5;
+  --purple:#8a63d2; --purple-soft:#ece4fa; --orange:#e08a3c; --orange-soft:#fbe9d8;
+  --red:#d9534f; --red-soft:#fbe1e0; --gray-soft:#eceef2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171f; --panel:#1d2230; --ink:#e8ebf2; --muted:#9aa3b5; --line:#343b4d;
+    --blue:#89a6ee; --blue-soft:#25304d; --green:#7cc9a0; --green-soft:#1f3a2e;
+    --purple:#b298ea; --purple-soft:#2f2645; --orange:#f0aa6a; --orange-soft:#3d2c1d;
+    --red:#ef7b77; --red-soft:#3f2121; --gray-soft:#2a3040;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171f; --panel:#1d2230; --ink:#e8ebf2; --muted:#9aa3b5; --line:#343b4d;
+  --blue:#89a6ee; --blue-soft:#25304d; --green:#7cc9a0; --green-soft:#1f3a2e;
+  --purple:#b298ea; --purple-soft:#2f2645; --orange:#f0aa6a; --orange-soft:#3d2c1d;
+  --red:#ef7b77; --red-soft:#3f2121; --gray-soft:#2a3040;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:clamp(28px,5vw,44px);margin:0 0 6px}
+.sub{color:var(--muted);font-size:18px;margin:0 0 40px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px 24px;margin:0 0 28px}
+h2{font-size:clamp(22px,3.4vw,30px);margin:0 0 4px}
+.lead{color:var(--muted);font-size:18px;margin:0 0 20px}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:inherit;fill:var(--ink)}
+.big{font-size:22px;text-align:center;margin:18px 0 0}
+.big b{color:var(--purple)}
+
+/* the real 30 cards */
+.shelf{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap;padding:12px 4px 4px;border-bottom:3px solid var(--line)}
+.card{border:none;cursor:pointer;width:24px;border-radius:4px 4px 2px 2px;padding:0;
+  outline-offset:2px;transition:transform .12s}
+.card:hover,.card:focus-visible{transform:translateY(-6px)}
+.card.on{outline:3px solid var(--ink)}
+.card.torn{clip-path:polygon(0 6px,20% 0,40% 6px,60% 0,80% 6px,100% 0,100% 100%,0 100%)}
+.s-def{background:var(--blue)} .s-mine{background:var(--green)} .s-ext{background:var(--purple)}
+.s-ten{background:var(--orange)} .s-ex{background:var(--red)} .s-src{background:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:14px 0 0;font-size:15px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:14px;height:14px;border-radius:3px;display:inline-block}
+.sub3{margin-top:32px;border-top:2px dashed var(--line);padding-top:24px}
+.sub3 h3{font-size:24px;margin:0 0 4px}
+.score{width:100%;border-collapse:separate;border-spacing:8px 10px;font-size:17px}
+.score th{font-weight:700;text-align:left;color:var(--muted)}
+.score td:first-child{white-space:nowrap;font-weight:700;width:9em}
+.score td i{display:block;height:22px;border-radius:6px;background:var(--blue)}
+.score tr.hl td:first-child{color:var(--purple)}
+.score tr.hl td i{background:var(--purple)}
+.real{background:var(--gray-soft);border-radius:14px;padding:16px;margin-top:18px;font-size:17px;display:grid;gap:8px}
+.real code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;padding:10px;word-break:break-all}
+.dist{display:grid;gap:12px}
+.drow{display:grid;grid-template-columns:15em 1fr;align-items:center;gap:12px;font-size:16px}
+.dbar{display:block;border-radius:8px;padding:8px 12px;font-weight:800;color:#fff;white-space:nowrap}
+.dbar.near{background:var(--green)} .dbar.far{background:var(--muted)}
+@media (max-width:640px){ .drow{grid-template-columns:1fr} .score td:first-child{width:auto} }
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+.tcol{border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+.ttl{font-size:19px;font-weight:800;margin-bottom:12px}
+.tbig{font-size:30px;font-weight:800;color:var(--purple);margin:12px 0 4px}
+.tcol p{margin:0;color:var(--muted);font-size:16px}
+.cellrow{display:grid;grid-template-columns:8.5em 1fr;align-items:center;gap:8px;margin-bottom:8px;font-size:14px;text-align:left;font-weight:700;white-space:nowrap}
+.lens{display:grid;gap:10px}
+.lrow{display:grid;grid-template-columns:8.5em 1fr auto 4em;align-items:center;gap:12px}
+.llab{font-size:15px;font-weight:700;white-space:nowrap}
+.lcard{display:block;height:30px;min-width:8px;background:var(--green-soft);border:2px solid var(--green);border-radius:8px}
+.lcard.tiny{background:var(--orange-soft);border-color:var(--orange)}
+.arrow{font-size:22px;color:var(--muted)}
+.lout{font-size:22px;font-weight:800;color:var(--purple);text-align:center;background:var(--purple-soft);border-radius:8px;padding:4px 0}
+@media (max-width:640px){ .two{grid-template-columns:1fr} }
+.scale{margin:64px 8px 4px}
+.track{position:relative;height:14px;border-radius:7px;
+  background:linear-gradient(90deg,var(--green),var(--line) 60%,var(--muted))}
+.pin{position:absolute;top:-34px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:15px}
+.pin::after{content:"";width:4px;height:30px;border-radius:2px;background:var(--ink);margin-top:2px}
+.pin.near b{color:var(--green)} .pin.far b{color:var(--muted)}
+.pin.zero{transform:none}
+.ends{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;margin-top:10px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vs div{background:var(--gray-soft);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.vs span{font-size:13px;color:var(--muted)}
+.vs em{font-style:normal;font-weight:800;font-size:17px;margin-top:4px}
+.vs em.dn{color:var(--green)} .vs em.up{color:var(--blue)}
+.vs small{font-weight:600;color:var(--muted);font-size:13px}
+.guide{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 22px}
+.g{display:flex;align-items:flex-end;gap:12px;background:var(--gray-soft);border-radius:12px;padding:14px}
+.g .card{display:inline-block;flex:none;cursor:default}
+.g .card:hover{transform:none}
+.g p{margin:0;font-size:15px;line-height:1.4}
+.example{background:var(--green-soft);border-radius:12px;padding:14px 16px;font-size:16px;margin:16px 0 0}
+@media (max-width:640px){ .guide{grid-template-columns:repeat(2,1fr)} }
+.info{margin-top:16px;background:var(--gray-soft);border-radius:14px;padding:16px 18px;font-size:16px}
+.info .row{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:8px}
+.info .tag{font-weight:700}
+.info code{display:block;white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,Menlo,monospace;
+  font-size:14px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:6px}
+.flag{display:inline-block;font-size:13px;padding:2px 8px;border-radius:99px;margin-left:6px;font-weight:600}
+.flag.torn{background:var(--red-soft);color:var(--red)}
+.flag.tiny{background:var(--orange-soft);color:var(--orange)}
+
+/* the four weaknesses */
+.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.weak{border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+.weak h3{margin:10px 0 4px;font-size:20px}
+.weak p{margin:0;color:var(--muted);font-size:16px}
+@media (max-width:640px){ .grid4{grid-template-columns:1fr} .card{width:18px} }
+
+footer{text-align:center;font-size:22px;margin-top:36px}
+footer b{color:var(--purple)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Chunking, illustrated: cutting notes into cards</h1>
+  <p class="sub">Following one note, <b>Test Doubles.md</b>, as it becomes 30 cards.<br><span style="font-size:16px">My notes are written in Chinese. Everything quoted on this page has been translated for the English version of the post; the real vault is Chinese.</span></p>
+
+  <!-- (1) cutting -->
+  <section>
+    <h2>① One long note → a stack of small cards</h2>
+    <p class="lead">Long things are hard to find in, so cut them down first</p>
+    <svg viewBox="0 0 900 260" role="img" aria-label="A long roll of paper cut by scissors into a stack of cards">
+      <!-- the long roll -->
+      <rect x="40" y="30" width="200" height="200" rx="14" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="3"/>
+      <g stroke="var(--blue)" stroke-width="4" stroke-linecap="round" opacity=".6">
+        <line x1="70" y1="70" x2="210" y2="70"/><line x1="70" y1="95" x2="190" y2="95"/>
+        <line x1="70" y1="120" x2="210" y2="120"/><line x1="70" y1="145" x2="170" y2="145"/>
+        <line x1="70" y1="170" x2="210" y2="170"/><line x1="70" y1="195" x2="185" y2="195"/>
+      </g>
+      <text x="140" y="255" font-size="20" text-anchor="middle">Test Doubles.md</text>
+      <text x="140" y="22" font-size="18" text-anchor="middle" style="fill:var(--muted)">17,297 characters</text>
+      <!-- arrow + scissors -->
+      <line x1="270" y1="130" x2="560" y2="130" stroke="var(--line)" stroke-width="6" stroke-dasharray="14 10"/>
+      <g transform="translate(415 130)">
+        <circle cx="-26" cy="-22" r="16" fill="none" stroke="var(--ink)" stroke-width="6"/>
+        <circle cx="-26" cy="22" r="16" fill="none" stroke="var(--ink)" stroke-width="6"/>
+        <line x1="-12" y1="-12" x2="40" y2="18" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/>
+        <line x1="-12" y1="12" x2="40" y2="-18" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/>
+      </g>
+      <polygon points="560,130 540,118 540,142" fill="var(--line)"/>
+      <!-- the stack of cards -->
+      <g>
+        <rect x="640" y="70" width="170" height="120" rx="10" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="3" transform="rotate(-10 725 130)"/>
+        <rect x="640" y="70" width="170" height="120" rx="10" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3" transform="rotate(-4 725 130)"/>
+        <rect x="640" y="70" width="170" height="120" rx="10" fill="var(--panel)" stroke="var(--blue)" stroke-width="3" transform="rotate(4 725 130)"/>
+        <g transform="rotate(4 725 130)" stroke="var(--blue)" stroke-width="4" stroke-linecap="round" opacity=".6">
+          <line x1="665" y1="105" x2="785" y2="105"/><line x1="665" y1="130" x2="765" y2="130"/><line x1="665" y1="155" x2="780" y2="155"/>
+        </g>
+      </g>
+      <text x="725" y="245" font-size="22" text-anchor="middle" font-weight="700">30 cards</text>
+    </svg>
+    <p class="big">The text on a card is <b>copied verbatim</b>, never rewritten</p>
+  </section>
+
+  <!-- (2) how it cuts -->
+  <section>
+    <h2>② Three cutting rules</h2>
+    <p class="lead">The scissors are dumb. They know only these three rules</p>
+    <svg viewBox="0 0 900 270" role="img" aria-label="Cut at a heading, cut at 800 characters, discard anything too small">
+      <!-- 1 cut at a heading -->
+      <g transform="translate(150 0)">
+        <rect x="-95" y="30" width="190" height="170" rx="14" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="3"/>
+        <text x="-75" y="72" font-size="26" font-weight="800" style="fill:var(--blue)">## Heading</text>
+        <line x1="-75" y1="100" x2="70" y2="100" stroke="var(--blue)" stroke-width="4" opacity=".5"/>
+        <line x1="-75" y1="125" x2="50" y2="125" stroke="var(--blue)" stroke-width="4" opacity=".5"/>
+        <line x1="-115" y1="145" x2="115" y2="145" stroke="var(--red)" stroke-width="4" stroke-dasharray="10 7"/>
+        <text x="-75" y="182" font-size="26" font-weight="800" style="fill:var(--blue)">## Heading</text>
+        <text x="0" y="245" font-size="22" text-anchor="middle" font-weight="700">At a heading ✂</text>
+      </g>
+      <!-- 2 cut at 800 chars -->
+      <g transform="translate(450 0)">
+        <rect x="-95" y="30" width="190" height="170" rx="14" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+        <g stroke="var(--green)" stroke-width="4" opacity=".5">
+          <line x1="-75" y1="60" x2="75" y2="60"/><line x1="-75" y1="82" x2="75" y2="82"/><line x1="-75" y1="104" x2="75" y2="104"/>
+          <line x1="-75" y1="148" x2="75" y2="148"/><line x1="-75" y1="170" x2="40" y2="170"/>
+        </g>
+        <line x1="-115" y1="126" x2="115" y2="126" stroke="var(--red)" stroke-width="4" stroke-dasharray="10 7"/>
+        <text x="105" y="118" font-size="18" text-anchor="end" font-weight="700" style="fill:var(--red)">800 chars</text>
+        <text x="0" y="245" font-size="22" text-anchor="middle" font-weight="700">At 800 chars ✂</text>
+      </g>
+      <!-- 3 discard if too small -->
+      <g transform="translate(750 0)">
+        <rect x="-70" y="40" width="70" height="34" rx="6" fill="var(--orange-soft)" stroke="var(--orange)" stroke-width="3" transform="rotate(-12 -35 57)"/>
+        <path d="M-60 110 L60 110 L48 205 L-48 205 Z" fill="var(--gray-soft)" stroke="var(--muted)" stroke-width="4"/>
+        <rect x="-70" y="96" width="140" height="16" rx="5" fill="var(--muted)"/>
+        <g stroke="var(--muted)" stroke-width="4"><line x1="-20" y1="130" x2="-16" y2="190"/><line x1="0" y1="130" x2="0" y2="190"/><line x1="20" y1="130" x2="16" y2="190"/></g>
+        <path d="M-20 80 Q 0 70 10 92" fill="none" stroke="var(--orange)" stroke-width="3" stroke-dasharray="5 5"/>
+        <text x="0" y="245" font-size="22" text-anchor="middle" font-weight="700">Under 30 chars → discard</text>
+      </g>
+    </svg>
+  </section>
+
+  <!-- (3) one card -->
+  <section>
+    <h2>③ A card holds three things</h2>
+    <p class="lead">They are the three columns of the chunks table</p>
+    <svg viewBox="0 0 900 300" role="img" aria-label="One card: id, source, text">
+      <rect x="170" y="20" width="560" height="260" rx="18" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/>
+      <!-- id -->
+      <rect x="195" y="45" width="130" height="60" rx="30" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="3"/>
+      <text x="260" y="85" font-size="28" text-anchor="middle" font-weight="800" style="fill:var(--purple)">#3744</text>
+      <!-- source -->
+      <rect x="345" y="45" width="360" height="60" rx="12" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="3"/>
+      <text x="525" y="84" font-size="24" text-anchor="middle" font-weight="700" style="fill:var(--blue)">📄 Test Doubles</text>
+      <!-- text -->
+      <rect x="195" y="125" width="510" height="130" rx="12" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+      <text x="215" y="165" font-size="22" font-weight="700" style="fill:var(--green)">## Definition</text>
+      <text x="215" y="200" font-size="20">Gerard Meszaros, using the film</text>
+      <text x="215" y="232" font-size="20">stunt double as the analogy…</text>
+      <!-- labels -->
+      <text x="150" y="82" font-size="22" text-anchor="end" font-weight="800" style="fill:var(--purple)">id</text>
+      <text x="750" y="82" font-size="22" font-weight="800" style="fill:var(--blue)">source</text>
+      <text x="750" y="195" font-size="22" font-weight="800" style="fill:var(--green)">text</text>
+    </svg>
+  </section>
+
+  <!-- (4) two drawers -->
+  <section>
+    <h2>④ Two drawers, joined by a number</h2>
+    <p class="lead">Left to right: find the id in vec, then use the id to pull the text from chunks</p>
+    <svg viewBox="0 0 900 470" role="img" aria-label="The question becomes numbers, vec returns the nearest ids, and chunks turns those ids back into text">
+      <!-- 1 the question -->
+      <rect x="40" y="10" width="330" height="56" rx="28" fill="var(--panel)" stroke="var(--ink)" stroke-width="3"/>
+      <text x="205" y="46" font-size="21" text-anchor="middle" font-weight="700">"What kinds of Test Double are there?"</text>
+      <circle cx="40" cy="38" r="20" fill="var(--ink)"/><text x="40" y="45" font-size="20" text-anchor="middle" font-weight="800" style="fill:var(--bg)">1</text>
+      <line x1="205" y1="66" x2="205" y2="100" stroke="var(--ink)" stroke-width="4"/>
+      <polygon points="205,110 195,94 215,94" fill="var(--ink)"/>
+      <text x="220" y="94" font-size="16" style="fill:var(--muted)">becomes 1,024 numbers</text>
+
+      <!-- 2 vec (left) -->
+      <rect x="40" y="115" width="330" height="250" rx="16" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="3"/>
+      <circle cx="40" cy="140" r="20" fill="var(--ink)"/><text x="40" y="147" font-size="20" text-anchor="middle" font-weight="800" style="fill:var(--bg)">2</text>
+      <text x="205" y="152" font-size="26" text-anchor="middle" font-weight="800" style="fill:var(--blue)">vec</text>
+      <text x="205" y="178" font-size="17" text-anchor="middle" style="fill:var(--muted)">ids + numbers only, no text</text>
+      <g font-family="ui-monospace,Menlo,monospace" font-size="17">
+        <rect x="65" y="195" width="280" height="40" rx="8" fill="var(--panel)" stroke="var(--purple)" stroke-width="3"/>
+        <text x="80" y="221" font-weight="800" style="fill:var(--purple)">#3744</text><text x="160" y="221">0.02 -0.11 …</text>
+        <rect x="65" y="243" width="280" height="40" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/>
+        <text x="80" y="269" font-weight="700" style="fill:var(--muted)">#3753</text><text x="160" y="269" style="fill:var(--muted)">0.05 -0.09 …</text>
+        <rect x="65" y="291" width="280" height="40" rx="8" fill="var(--panel)" stroke="var(--line)" stroke-width="2"/>
+        <text x="80" y="317" font-weight="700" style="fill:var(--muted)">#3755</text><text x="160" y="317" style="fill:var(--muted)">0.01 -0.14 …</text>
+      </g>
+      <text x="205" y="355" font-size="16" text-anchor="middle" style="fill:var(--blue)">🔍 compared against 3,936, keep the nearest 5</text>
+
+      <!-- the id arrow -->
+      <line x1="345" y1="215" x2="555" y2="215" stroke="var(--purple)" stroke-width="5" stroke-dasharray="12 8"/>
+      <polygon points="570,215 552,204 552,226" fill="var(--purple)"/>
+      <rect x="390" y="190" width="120" height="50" rx="25" fill="var(--purple)"/>
+      <text x="450" y="222" font-size="21" text-anchor="middle" font-weight="800" style="fill:#fff">id 3744</text>
+
+      <!-- 3 chunks (right) -->
+      <rect x="530" y="115" width="330" height="250" rx="16" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+      <circle cx="530" cy="140" r="20" fill="var(--ink)"/><text x="530" y="147" font-size="20" text-anchor="middle" font-weight="800" style="fill:var(--bg)">3</text>
+      <text x="695" y="152" font-size="26" text-anchor="middle" font-weight="800" style="fill:var(--green)">chunks</text>
+      <text x="695" y="178" font-size="17" text-anchor="middle" style="fill:var(--muted)">id + source + text</text>
+      <rect x="570" y="195" width="250" height="136" rx="10" fill="var(--panel)" stroke="var(--green)" stroke-width="3"/>
+      <text x="590" y="228" font-size="22" font-weight="800" style="fill:var(--purple)">#3744</text>
+      <text x="590" y="262" font-size="18" style="fill:var(--blue)">📄 Test Doubles</text>
+      <text x="590" y="296" font-size="18">## Definition Gerard…</text>
+      <text x="695" y="355" font-size="16" text-anchor="middle" style="fill:var(--green)">pull the text, hand it to the model</text>
+
+      <!-- the three steps along the bottom -->
+      <g font-size="19" font-weight="700">
+        <text x="40" y="420">1 question → numbers</text>
+        <text x="300" y="420">2 nearest ids from vec</text>
+        <text x="610" y="420">3 ids → text from chunks</text>
+      </g>
+      <line x1="40" y1="440" x2="860" y2="440" stroke="var(--line)" stroke-width="3"/>
+    </svg>
+    <p class="big">That number is the card's <b>id</b>: at indexing time the same card goes into both drawers under <b>the same id</b></p>
+    <p class="big" style="font-size:19px;color:var(--muted)">Like a locker room: vec tells you which lockers, chunks is where the things actually are</p>
+
+  </section>
+
+  <!-- (5) the real 30 -->
+  <section>
+    <h2>⑤ What the real cut looks like</h2>
+    <p class="lead">All 30 cards from Test Doubles.md, left to right in the order they appear in the file</p>
+
+    <div class="guide">
+      <div class="g"><span class="card s-mine" style="height:64px"></span><p><b>1 bar = 1 card</b><br>taller = more characters, max 800</p></div>
+      <div class="g"><span class="card s-mine" style="height:64px"></span><p><b>Flat top</b><br>starts at a heading<br>(cut by rule 1)</p></div>
+      <div class="g"><span class="card s-mine torn" style="height:64px"></span><p><b>Torn top</b><br>starts mid-sentence<br>(cut at 800)</p></div>
+      <div class="g"><span class="card s-mine" style="height:12px"></span><p><b>Very short</b><br>a leftover fragment</p></div>
+    </div>
+
+    <div class="shelf" id="shelf" role="list"></div>
+    <div class="legend">
+      <span>Colour = which part of the file it came from:</span>
+      <span><i class="dot s-def"></i>Definition</span>
+      <span><i class="dot s-mine"></i>My practice</span>
+      <span><i class="dot s-ext"></i>Outside views</span>
+      <span><i class="dot s-ten"></i>Tensions and gaps</span>
+      <span><i class="dot s-ex"></i>Examples</span>
+      <span><i class="dot s-src"></i>Sources</span>
+    </div>
+    <p class="example">👀 Look at the first three green bars: <b>tall, tall, short</b> (800, 800, 102 characters).<br>
+      "My practice" was too long, so it was cut twice; the 102-character tail is what was left. The last two have torn tops because each picks up mid-sentence from the one before.</p>
+    <p class="lead" style="margin:6px 0 0">Click any bar to see that card 👇</p>
+    <div class="info" id="info" aria-live="polite"></div>
+  </section>
+
+  <!-- (6) four weaknesses -->
+  <section>
+    <h2>⑥ Four weaknesses of cutting this way</h2>
+    <p class="lead">When a card is retrieved, it is all the model sees</p>
+    <div class="grid4">
+      <div class="weak">
+        <svg viewBox="0 0 200 110" aria-hidden="true">
+          <rect x="10" y="25" width="85" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+          <rect x="105" y="25" width="85" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+          <text x="52" y="62" font-size="18" text-anchor="middle">…here</text>
+          <text x="148" y="62" font-size="18" text-anchor="middle">not used…</text>
+          <line x1="100" y1="10" x2="100" y2="100" stroke="var(--red)" stroke-width="4" stroke-dasharray="7 5"/>
+        </svg>
+        <h3>Sentences get cut</h3><p>#3745 starts at "the opposite, not used here"</p>
+      </div>
+      <div class="weak">
+        <svg viewBox="0 0 200 110" aria-hidden="true">
+          <rect x="30" y="8" width="140" height="30" rx="6" fill="none" stroke="var(--muted)" stroke-width="3" stroke-dasharray="6 5"/>
+          <text x="100" y="29" font-size="16" text-anchor="middle" style="fill:var(--muted)">## Outside views ?</text>
+          <rect x="20" y="55" width="160" height="45" rx="8" fill="var(--purple-soft)" stroke="var(--purple)" stroke-width="3"/>
+          <text x="100" y="84" font-size="16" text-anchor="middle">### Hudson Ch3…</text>
+        </svg>
+        <h3>The parent heading is gone</h3><p>The card has no idea which section it belongs to</p>
+      </div>
+      <div class="weak">
+        <svg viewBox="0 0 200 110" aria-hidden="true">
+          <rect x="20" y="20" width="90" height="80" rx="8" fill="var(--green-soft)" stroke="var(--green)" stroke-width="3"/>
+          <rect x="130" y="78" width="40" height="22" rx="5" fill="var(--orange-soft)" stroke="var(--orange)" stroke-width="3"/>
+          <text x="65" y="66" font-size="18" text-anchor="middle">800 chars</text>
+          <text x="150" y="70" font-size="16" text-anchor="middle" style="fill:var(--orange)">63 chars</text>
+        </svg>
+        <h3>Fragments</h3><p>A leftover tail still takes one of the five slots</p>
+      </div>
+      <div class="weak">
+        <svg viewBox="0 0 200 110" aria-hidden="true">
+          <rect x="40" y="20" width="120" height="80" rx="8" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="3"/>
+          <rect x="120" y="8" width="64" height="26" rx="6" fill="var(--red-soft)" stroke="var(--red)" stroke-width="3" transform="rotate(18 152 21)"/>
+          <text x="152" y="27" font-size="14" text-anchor="middle" transform="rotate(18 152 21)" style="fill:var(--red)">tags</text>
+        </svg>
+        <h3>Labels torn off</h3><p>frontmatter tags and related never reach retrieval</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>When a card is retrieved, <b>those 800 characters are all it has</b>.<br>How well you cut decides what you can find.</footer>
+</main>
+
+<script>
+// The 30 cards Test Doubles.md actually became (id, characters, section, starts mid-sentence, opening)
+const cards = [
+  [3744,800,"def",0,"## Definition  > Gerard Meszaros, using the **film stunt double"],
+  [3745,484,"def",1,"the opposite, not used here.** Hudson, Testing Swift Ch03, takes the 'flight"],
+  [3746,800,"mine",0,"## My practice  **AppTests/ has a TestDouble/ subdire"],
+  [3747,800,"mine",1,"**(XCUITest without a simulator):  ```swift class"],
+  [3748,102,"mine",1," + override) mostly - matching Hudson Ch3's partial mock"],
+  [3749,800,"mine",0,"### AssetLibrary Repository rework (2026-07) - Full m"],
+  [3750,748,"mine",1,"{         // always returns stubbedResult, never the network     } }"],
+  [3751,800,"mine",0,"### AppUI's `#if DEBUG` factory methods (2026-08)"],
+  [3752,63,"mine",1,"ng(isConnected: false)` also means **you can see the offline page without unplugging**, and"],
+  [3753,800,"ext",0,"### Hudson Testing Swift Ch3 (2025-05-16) - the 5"],
+  [3754,728,"ext",1," hard-coded, a classic stub     } } ```  #### Mock example + Jon R"],
+  [3755,800,"ext",0,"### Hudson Ch3 — Partial Mock vs Full Mock"],
+  [3756,777,"ext",1,"s: ...) {     let sut = PowerMonitor(device:"],
+  [3757,179,"ext",0,"### Hudson on naming and organising  1. **Start with: nested type**"],
+  [3758,323,"ext",0,"### Lead Essentials Module 6 / 9 / 11 — Test"],
+  [3759,800,"ext",0,"### Hudson SwiftData by Example Ch9 — In-memo"],
+  [3760,800,"ext",1,"lass MovieTests: XCTestCase {     func testCr"],
+  [3761,209,"ext",1,"ry)     modelContainer = try ModelContainer(f"],
+  [3762,429,"ext",0,"### A mocking anti-example from the mentoring camp  **Study-group Storage"],
+  [3763,506,"ten",0,"### 1. Hudson's Closure Injection vs Lead Esse"],
+  [3764,692,"ten",0,"### 2. Mock / Spy mean opposite things in my two source systems"],
+  [3765,342,"ten",0,"### 3. Swift 6 strict concurrency and mutable t"],
+  [3766,391,"ten",0,"### 4. Mocks and production types **drift apart** over time"],
+  [3767,150,"ten",0,"### 5. Partial Mock does not work on a Swift struct"],
+  [3768,158,"ten",0,"### 6. Partial mock of a singleton?  UIKit `UIAp"],
+  [3769,800,"ex",0,"### The whole food chain on one protocol  ```swift protocol L"],
+  [3770,656,"ex",1,"ivate var received: [String] = []      init(e"],
+  [3771,508,"ex",0,"### Real in production, the matching double in tests  ```swi"],
+  [3772,200,"src",0,"### Mine - [[20260503 three generations of the project]](proj"],
+  [3773,731,"src",0,"### External - [[20260510 Hudson Testing Swift Test"]
+];
+const sectionName = {def:"Definition",mine:"My practice",ext:"Outside views",ten:"Tensions and gaps",ex:"Examples",src:"Sources"};
+const shelf = document.getElementById("shelf");
+const info = document.getElementById("info");
+const esc = s => s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+function show(c, btn){
+  const [id,len,sec,torn,head] = c;
+  shelf.querySelectorAll(".card").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  let flags = "";
+  if (torn) flags += '<span class="flag torn">starts mid-sentence</span>';
+  if (len < 120) flags += '<span class="flag tiny">fragment</span>';
+  info.innerHTML =
+    `<div class="row"><span class="tag">#${id}</span><span>${len} chars</span><span>from "${sectionName[sec]}"</span>${flags}</div>` +
+    `Card opens with: <code>${esc(head)}…</code>`;
+}
+
+cards.forEach(c => {
+  const b = document.createElement("button");
+  b.className = `card s-${c[2]}` + (c[3] ? " torn" : "");
+  b.style.height = Math.max(14, Math.round(c[1] / 800 * 170)) + "px";
+  b.setAttribute("role","listitem");
+  b.setAttribute("aria-label", `card ${c[0]}, ${c[1]} characters`);
+  b.title = `#${c[0]}  ${c[1]} chars`;
+  b.addEventListener("click", () => show(c, b));
+  shelf.appendChild(b);
+});
+show(cards[0], shelf.firstChild);
+
+</script>
+  <p style="max-width:980px;margin:0 auto;padding:0 16px 60px;color:#6b7385;font-size:15px">This page is the interactive companion to the Medium post on running RAG over my own notes. The cards come from my personal vault, which is written in Chinese; the previews here are translated. Project and type names have been replaced following the same anonymization rules as the post.</p>
+</body>
+</html>
