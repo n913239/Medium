@@ -14,9 +14,7 @@ Medium custom URL(英文版)— 發布前一定要設,發布後永遠改不了:
 
 # I Measured Apple's 51 Lines of CLAUDE.md: Tool Calls Dropped From 14.3 to 1.7 — What It Saved Was the Model's Checking
 
-A month ago I wrote
-[Apple Ships a CLAUDE.md: 91 Lines, Not One Wasted. What About Yours?](https://medium.com/@n913239/apple-ships-a-claude-md-91-lines-not-one-wasted-what-about-yours-e925cfb65448),
-about the 91-line CLAUDE.md in `apple/containerization`. `/doctor` told me to cut the Architecture section, the longest section Apple wrote, and I argued back: working out how the container and the VM talk to each other from the graph would take most of a day, and reading those few lines takes seconds.
+A month ago I wrote [Apple Ships a CLAUDE.md: 91 Lines, Not One Wasted. What About Yours?](https://medium.com/@n913239/apple-ships-a-claude-md-91-lines-not-one-wasted-what-about-yours-e925cfb65448), about the 91-line CLAUDE.md in `apple/containerization`. `/doctor` told me to cut the Architecture section, the longest section Apple wrote, and I argued back: working out how the container and the VM talk to each other from the graph would take most of a day, and reading those few lines takes seconds.
 
 **That was an estimate, not a measurement.**
 
@@ -76,7 +74,7 @@ Four experimental arms, the fourth added later for reasons I get to in section 6
 
 All four are clean copies made with `git archive` from `apple/containerization` at commit `74ace14`: **447 tracked files, 335 `.swift` files**. Arms A, B and C ran each question 3 times, 45 runs in total.
 
-Conditions: Claude Code **2.1.292**, model **`claude-sonnet-5-5`**, `--strict-mcp-config` (no MCP servers loaded), `--allowedTools Read Grep Glob`, `--max-turns 40`. Identical across arms. Limiting the tools to those three keeps the tool-call counts comparable, at the cost of not matching how I actually work (I normally use Bash too). More on that at the end.
+Conditions: Claude Code **2.1.292**, model **`claude-sonnet-5-5`**, `--strict-mcp-config` (no MCP servers loaded), `--allowedTools Read Grep Glob`, `--max-turns 40`. Identical across arms. I believed `--allowedTools` limited the model to those three tools so the tool-call counts would be comparable. It doesn't: it only **pre-approves** them, and Bash stayed available the whole time. I found this after publishing, while going back to the raw data to answer a reader's comment. Section 4 and the limitations at the end cover what it changes.
 
 **All 45 runs completed, and every answer met the bar I had defined in advance.** So the interesting difference between the arms is how much work it took to get there.
 
@@ -136,7 +134,7 @@ This is the part I cared about most. Look at the two control questions.
 
 **Q4, whose answer is in the Build section: A and B both used 0 tool calls, all three times** — a dead tie on the main metric. B is missing the last 51 lines, but this answer sits before them, so nothing changed. B was even faster on average, 7.5 seconds against 11.7.
 
-**Q2, which CLAUDE.md does not cover at all: A was `[2, 2, 2]`, B was `[2, 4, 4]`.** B cost 1.3 more. So shortening CLAUDE.md **is not free**. With a thinner document the model seems to have worked a little harder at finding other things too.
+**Q2, which CLAUDE.md does not cover at all: A was `[2, 2, 2]`, B was `[2, 4, 4]`.** B cost 1.3 more. So shortening CLAUDE.md **is not free**. With a thinner document the model seems to have worked a little harder at finding other things too. (Added after publishing: all six of arm A's tool calls on Q2 were Bash, each chaining several commands, so part of that 1.3 is just a different unit of counting. By cost, both arms averaged $0.058 on Q2, a tie.)
 
 I am spelling that out because it cuts against my own conclusion: **the control cost is +1.3 tool calls, the Architecture cost is +12.6, close to ten times as much.** "What I measured is mostly those 51 lines" holds; "nothing else was affected" does not.
 
@@ -144,7 +142,7 @@ Had Q4 degraded as well, the experiment would have been void and I would have ha
 
 ---
 
-## 4. Surprise one: half a CLAUDE.md is worse than none
+## 4. Surprise one: half a CLAUDE.md is no better than none
 
 One row deserves its own look:
 
@@ -152,13 +150,17 @@ One row deserves its own look:
 Q3  VMM backends    A: [0, 4, 1]    B: [9, 10, 7]    C: [4, 5, 5]
 ```
 
-**B, with the Architecture section cut out, cost more than C, which had no CLAUDE.md at all — in all three runs, without exception.**
+**B, with the Architecture section cut out, used more tool calls than C, which had no CLAUDE.md at all — in all three runs, without exception.**
 
 The first time I ran this I ran it once, and when I saw `9 vs 4` I badly wanted to turn it into a punchy one-liner. But writing that from a single run is making things up, so I held off and filled every cell to three runs. It survived.
 
-My guess at a reading: the remaining 40 lines open by saying this repo holds two Swift packages, so the model starts from a partial set of premises and goes looking for the rest, which is more roundabout than knowing from the start that there is no repo document to lean on.
+**But the comparison itself was unfair, and I only found that after publishing.** Bash was available all along (see section 1), and all 14 of arm C's tool calls on Q3 were **Bash**, each one chaining several `grep` and `sed` commands. All 26 of B's were Read, Grep or Glob, one operation each. The two arms were not counting the same unit.
 
-To be clear about the scope: **this is one question in one repo**, not a general rule. But it did show me something worth testing again — when you trim a CLAUDE.md, cutting a section down to half may be worse than deleting it outright.
+Comparing by cost, which this does not distort: B averaged $0.1055 and C $0.1024, a 3% difference, and on the third run B was the cheaper one. So the original heading, "worse than none", doesn't hold. What does hold: **cutting a section down to half was no better than deleting it outright.**
+
+My original guess at a reading was that the remaining 40 lines open by saying this repo holds two Swift packages, so the model starts from a partial set of premises and goes looking for the rest. After the correction, all that guess still explains is that those 40 lines didn't save it anything.
+
+To be clear about the scope: **this is one question in one repo**, not a general rule.
 
 Running three times also corrected an overstatement of my own. After one run I thought "A used 0 tool calls on four of the five questions". At n=3, Q3's A is `[0, 4, 1]` — it varies. The stable zeros are Q1, Q4 and Q5.
 
@@ -269,7 +271,7 @@ themselves, and a small friendly robot noticing the mismatch with a raised
 finger. Warm, gentle, no text, no letters.
 -->
 
-**4. If you cut a section, don't stop halfway.** The "B worse than C" result showed up in one question only, but it is enough to make me want a separate test for this way of trimming.
+**4. If you cut a section, don't stop halfway.** On Q3, the half-trimmed arm B cost the same as arm C with no document at all; keeping those 40 lines bought nothing. It showed up in one question only, but it is enough to make me want a separate test for this way of trimming.
 
 And one that is not about the document at all. **When Claude answers fast and clean without opening a single file, that is a good moment to suspect it is only reciting a stale document.** It will not always go and check on its own. And as above, even when it notices something is off and asks whether you want it checked, it may well finish without checking.
 
@@ -280,7 +282,7 @@ And one that is not about the document at all. **When Claude answers fast and cl
 Plainly:
 
 - **One repo, one model, n=3 per cell.** Another repo or another model will give different numbers.
-- **Tools were limited to `Read / Grep / Glob`.** I normally use Bash, which changes the absolute counts. Conditions were identical across arms so the comparison holds, but don't treat 1.7 and 14.3 as predictions for your own project.
+- **Tools were not actually limited to `Read / Grep / Glob`.** `--allowedTools` only pre-approves tools; it doesn't block the others. 20 of the 51 runs used Bash, and one Bash call can chain several commands. The spread was uneven: 6 of arm A's 11 tool calls were Bash (all on control question Q2, none on the Architecture questions), 3 of B's 53, and 34 of C's 58. The headline 1.7 versus 14.3 (A versus B) is barely affected, but arm C's counts are **undercounts**, and section 4's "B worse than C" has been rewritten because of it. The flag that actually restricts tools is `--tools`. And don't treat 1.7 and 14.3 as predictions for your own project.
 - **Arm C is not "no documentation at all".** My global `~/.claude/CLAUDE.md` was present in every arm, a constant rather than a variable (it covers my writing conventions and has nothing to do with this repo). "No repo CLAUDE.md" is the accurate description.
 - **The Q3 anomaly showed up in one question.** Turning it into a rule would take more questions and more repos.
 - **Wall time moves with machine load**, so it is a secondary number. Tool calls are the metric.
