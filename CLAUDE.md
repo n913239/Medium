@@ -26,9 +26,14 @@
 
 - **位置**:`story/YYYY-MM-DD_<slug>/`,發布日當資料夾名前綴。系列文 slug 用 `claude-code-<topic>`。
 - **雙語**:`index.md`(繁體中文)+ `index-en.md`(英文),兩版結構一一對應。
+  - 🔴 **先把中文版寫完、user 確認過,才動英文版。** 不要兩版同步寫。
+    中文版定稿前常常換方向、改標題、動結構,英文版跟著改是白工,也最容易留下中英不同步的段落。
+    (2026-10-23 的 side-channel 就改了三輪:主軸從「驗證三個宣稱」換成「拆解那 138 KB」、
+    標題重下、第四節整節重寫。)
 - **首行 Tags**:`<!-- Tags: A, B, C, D, E -->`(Medium 上限 5 個)。
-- **封面與插圖**:引用 `![](cover.png)` 等,並在緊接的 `<!-- -->` 註解裡放 **Gemini 生圖 prompt**。畫風統一:吉卜力柔和粉彩(mint／peach／lavender)、白底、16:9。
-  - **封面的位置:前言之後、第一條 `---` 之前**(讀者先讀完前言,在進入「一、」／Part 1 之前才看到 cover),不要放在 H1 標題正下方。
+- **插圖**:引用 `![](table-xxx.png)` 等,並在緊接的 `<!-- -->` 註解裡放表格原始碼。畫風統一:吉卜力柔和粉彩(mint／peach／lavender)、白底、16:9。
+  - **封面不寫進 markdown**(2026-10-23 改):`index.md` 裡**不要**有 `![](cover.png)`,也不要「插入封面圖」提示行 —— Medium 的封面是貼文時另外設的,寫在 markdown 裡反而會多出一張重複的圖。
+  - **封面的 Gemini 生圖 prompt 放在最上面**:Tags 註解之後、H1 之前,自成一個 `<!-- -->` 區塊。檔案留在資料夾裡供貼文時使用。
   - 連帶慣例:**前言要短**。鋪陳、數字來源、名詞釐清放進第一節,不要堆在封面前面。
   - **生圖放進資料夾時,實際格式是 JPEG 就直接轉成 PNG**,不用先問。用 `file` 檢查真實格式,**不要看副檔名**(AI 產的圖常是 JPEG 卻叫 `.png`):
     ```
@@ -38,13 +43,10 @@
     原檔移到 `.bak-img/`(已 gitignore),不要留在文章資料夾裡。
 - **每張圖前面都要有「插入圖片」提示行**(貼到 Medium 時提醒自己該放哪張圖,貼完再刪):
   ```
-  *(在這裡插入封面圖:cover.png)*      ← 封面
-  ![](cover.png)
-
   *(在這裡插入圖片:table-xxx.png)*     ← 其餘所有圖(插圖、表格圖)
   ![table-xxx](table-xxx.png)
   ```
-  英文版用 `*(Insert cover image here: cover.png)*` / `*(Insert image here: table-xxx-en.png)*`,且檔名要指向英文版的圖。**中英兩版、每一張圖都要有,別漏。**
+  英文版用 `*(Insert image here: table-xxx-en.png)*`,且檔名要指向英文版的圖。**中英兩版、每一張內文圖都要有,別漏;封面沒有提示行**(見上方封面那條)。
 - **表格以 PNG 呈現**(Medium 不吃 markdown 表格):
   ```
   ![table-xxx](table-xxx.png)
@@ -81,6 +83,9 @@
 
 ## 工具鏈(`tools/`)
 
+- **`venue-profile.md`** — 給校稿工具看的「這個場域長什麼樣」:哪些是體例不要標(總結節、破折號、
+  粗體、狀態 emoji)、哪些是真的要標、哪些不可動(真實數字、stand-in 類名)。跑 sepia 前先讓它讀這份。
+  **刻意不寫死數值** —— 句長基準由 `check_rhythm` 從 `story/` 現算,寫死會過期。
 - **`md-to-medium.html`** — 「Markdown to Medium Converter」。貼文時用它把 `index.md` 轉成 Medium 友善格式再貼上。
 - **`skills/gen-table-image`** — 從 .md 裡「圖片引用 + 緊接 HTML comment 表格」的配對,產生與文章風格一致的 PNG。每篇資料夾裡的 `gen.sh` 就是同一套邏輯的在地版(playwright screenshot + ImageMagick trim)。
   - 表格圖風格:深色標題列(`#333`)+ 白底 + 淡灰分隔線;`code` 用等寬字。
@@ -93,7 +98,8 @@
 
 ## 發布流程
 
-1. 在 `story/YYYY-MM-DD_<slug>/` 寫 `index.md` + `index-en.md`。
+1. 在 `story/YYYY-MM-DD_<slug>/` 寫 `index.md`。**英文版先不要寫** —— 等中文版定稿、
+   user 說可以了,再寫 `index-en.md`(理由見上方「雙語」那條)。
 2. 依 HTML comment 裡的 Gemini prompt 生封面／插圖;跑 `gen.sh` 產表格 PNG(中英)。
 3. **貼文前檢查**。先跑 **`medium-check` 的 `check_article`**(MCP,`.mcp.json` 已設,實作在 `tools/mcp/medium-check/`),它涵蓋:
    - Tags ≤ 5、code fence 偶數、佔位符(`TODO`／`待補`／`(Medium 網址)`)= 0
@@ -107,8 +113,26 @@
    **工具不管、要自己查的**:
    - 站內連結用實際網址且中英各自指向對應語言版;外部連結有效
    - **表格 PNG 內的文字**也要過去識別化(改完 `gen.sh` 記得重新產圖)
-   - **英文版跑 `humanizer` 診斷(只診斷、不讓它改檔)**:抓 AI 腔,特別是聽起來好聽但沒資訊的比喻。
-     2026-09 0828 英文版被 Medium 推廣後,3 則留言批評 AI 腔(最高 42 掌、1 人封鎖作者)——結構檢查全過不代表文字沒問題。
+
+3.5 **校稿分層**(2026-10-23 定,比較過 humanizer 與 sepia 之後)。三套工具抓的不是同一層,
+   **不是全都跑**,按層次挑:
+
+   | 層 | 用什麼 | 時機 |
+   |---|---|---|
+   | 節奏 | `medium-check` 的 `check_rhythm` | 每篇,跟著 `check_article` 一起跑,零成本 |
+   | 中文詞彙句型 | `humanizer-zh` | 每篇中文版。它的〈誤判防護〉認得本系列的既定風格 |
+   | 英文結構 | `sepia`(`../Github/sepia/`,v0.12.4) | **英文版發布前**,或 `check_rhythm` 亮紅燈時 |
+   | 英文詞彙句型 | `humanizer` | 英文版,**排在 sepia 之後** |
+
+   - **順序不能反**:sepia 自己規定 style pass 最後跑、結構先修;humanizer 整套都是 style 層。
+   - **沒有任何一套可以直接改檔**。`humanizer`(英文上游版)預設會寫檔,叫它時要明講只診斷。
+     兩套疊著改會累積機器編輯自己的痕跡(sepia `style-pass.md` §4:相對人類原稿 lexical
+     density 大跌 d = −3.10),逐條判、一次手改完。
+   - **跑 sepia 前先餵 `tools/venue-profile.md`**,否則它會把「總結」節、破折號、粗體當成
+     AI 痕跡標出來。
+   - 建議逐條給判斷,有比較好才改(與 `suggestions/` 的規矩相同)。
+   - 為什麼英文版要多花這些:2026-09 0828 英文版被 Medium 推廣後,3 則留言批評 AI 腔
+     (最高 42 掌、1 人封鎖作者)——結構檢查全過不代表文字沒問題。中文版從來沒有過這種回饋。
      英文版直接用平實英文寫,不要逐句翻中文的修辭。
 4. 用 `tools/md-to-medium.html` 轉換後貼到 Medium(貼完掃一眼 code block／JSON 有沒有跑掉;**刪掉 `*(在這裡插入圖片…)*` 提示行**)。
    - **按下發布前先設好 custom URL**:三點選單 → More settings → Advanced settings → 勾 Custom。

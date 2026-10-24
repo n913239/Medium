@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import datetime
 import re
 import unicodedata
 from dataclasses import dataclass, asdict
@@ -34,6 +35,8 @@ class Check:
     name: str
     ok: bool
     detail: str
+    # warn=True:只提醒、不算進 failed —— 留給要人工判斷的項目
+    warn: bool = False
 
     @property
     def as_dict(self) -> dict:
@@ -128,11 +131,17 @@ def check_fences(lines: list[str], lang: str) -> Check:
 def check_images(path: Path, lines: list[str], lang: str) -> list[Check]:
     imgs = images(lines)
     n_mark = markers(lines)
+    # 封面不必有「插入圖片」提示行(2026-10-23 改:封面的 Gemini prompt 註解移到 H1 上方,
+    # 提示行一併拿掉)。舊文章封面還留著提示行,所以兩種寫法都要算對 —— 只比非封面的。
+    n_cover_img = sum(1 for p_ in imgs if p_.lower().startswith("cover."))
+    n_cover_mark = sum(1 for line in lines if MARKER_RE.match(line) and "cover." in line.lower())
+    body_img, body_mark = len(imgs) - n_cover_img, n_mark - n_cover_mark
     out = [
         Check(
             f"image-markers[{lang}]",
-            len(imgs) == n_mark,
-            f"圖片 {len(imgs)} 張 vs 提示行 {n_mark} 行",
+            body_img == body_mark,
+            f"內文圖 {body_img} 張 vs 提示行 {body_mark} 行"
+            + (f";封面圖 {n_cover_img} 張、提示行 {n_cover_mark} 行(封面提示行可有可無)" if n_cover_img else ""),
         )
     ]
 
@@ -218,6 +227,191 @@ def check_fullwidth(lines: list[str]) -> Check:
         "fullwidth[zh]",
         not hits,
         "無全形標點" if not hits else f"{len(hits)} 處:{', '.join(hits[:8])}",
+    )
+
+
+COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+# 不算「散文」的行首:清單、標題、表格、圖片、提示行、水平線、註解殘行
+BLOCK_RE = re.compile(r"\s*([-*+|#!]|\d+\.\s|\*\(|<!--|-->)")
+
+
+def body_lines(text: str) -> list[tuple[int, str]]:
+    """剔除 HTML 註解與 fenced code,保留原始行號。
+
+    註解裡放的是表格原始碼與 Gemini prompt,本來就是多行,不能算進正文。
+    """
+    blanked = COMMENT_RE.sub(lambda m: "\n" * m.group().count("\n"), text)
+    return strip_fences(blanked.split("\n"))
+
+
+def check_linebreaks(text: str, lang: str) -> Check:
+    """段落中間的換行:md-to-medium 會把它轉成 <br>,線上一句話斷成好幾行。
+
+    0828 起的慣例是一段一行;1005、1016 是拆行寫的,發文後才發現(1016 線上 77 個 <br>)。
+    想斷開好讀的地方應該空一行另起段落。只提醒不擋:偶爾是刻意的,由人判斷。
+    """
+    body = body_lines(text)
+    hits = []
+    for (i, a), (j, b) in zip(body, body[1:]):
+        # 只有 `>` 的行是引言內的段落分隔,等同空行
+        if j != i + 1 or a.strip() in ("", ">") or b.strip() in ("", ">"):
+            continue
+        quote = a.lstrip().startswith(">") and b.lstrip().startswith(">")
+        item_cont = re.match(r"\s*[-*+]\s", a) and re.match(r"\s{2,}\S", b) and not re.match(r"\s*[-*+]\s", b)
+        prose = not BLOCK_RE.match(a) and not a.lstrip().startswith(">") \
+            and not BLOCK_RE.match(b) and not b.lstrip().startswith(">")
+        if quote or item_cont or prose:
+            hits.append(f"L{i}")
+    return Check(
+        f"linebreaks[{lang}]",
+        not hits,
+        "無段落內換行" if not hits else f"{len(hits)} 處(刻意的請改空一行):{', '.join(hits[:8])}",
+        warn=True,
+    )
+
+
+def check_bold(text: str, lang: str) -> Check:
+    """`**` 旁邊是標點又緊貼文字時,CommonMark 不認它是粗體的開頭/結尾,線上直接顯示 `**`。
+
+    1016 合併換行後踩到:`…Makefile。**而 A 組` 原本 `**` 後面是換行所以沒事,
+    合併後變成「標點 + ** + 文字」,5 段粗體全失效。修法是把標點移到 `**` 外面。
+    """
+    def punct(ch: str) -> bool:
+        # CommonMark 的「標點」含 Unicode P 與 S 類(反引號、$、+ 都算)
+        return unicodedata.category(ch)[0] in "PS"
+
+    hits = []
+    for i, line in body_lines(text):
+        # code span 換成 `c`:保留反引號(它本身算標點),內容不參與判斷
+        parts = INLINE_CODE_RE.sub("`c`", line).split("**")
+        if len(parts) < 3:
+            continue
+        for k in range(1, len(parts) - 1, 2):
+            inner, before, after = parts[k], parts[k - 1], parts[k + 1]
+            if not inner:
+                continue
+            bad_close = punct(inner[-1]) and after and not after[0].isspace() and not punct(after[0])
+            bad_open = punct(inner[0]) and before and not before[-1].isspace() and not punct(before[-1])
+            if bad_close or bad_open:
+                hits.append(f"L{i}")
+                break
+    return Check(
+        f"bold[{lang}]",
+        not hits,
+        "粗體標記都會生效" if not hits else f"{len(hits)} 行的 ** 會失效(把標點移到 ** 外面):{', '.join(hits[:8])}",
+    )
+
+
+def sentences(text: str, lang: str) -> list[str]:
+    """把正文切成句子。標題、表格、清單、圖片、引言、程式碼一律不算。
+
+    量的是「讀者讀到的散文」,所以結構性的行要先拿掉 —— 表格裡的欄位、
+    清單的條目都不是句子,混進來會把句長分布算壞。
+    """
+    out = []
+    for _, line in body_lines(text):
+        s = line.strip()
+        if not s or BLOCK_RE.match(line) or s.startswith(">"):
+            continue
+        s = INLINE_CODE_RE.sub("c", s)
+        s = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", s)   # 連結只留文字
+        s = s.replace("**", "").replace("*", "")
+        parts = re.split(r"(?<=[。!?:])\s*", s) if lang == "zh" else re.split(r"(?<=[.!?])\s+", s)
+        out += [p.strip() for p in parts if len(p.strip()) > 2]
+    return out
+
+
+def rhythm_stats(text: str, lang: str) -> dict | None:
+    """一篇文章的句長分布。句數太少就不算(短文的分布沒有意義)。"""
+    sents = sentences(text, lang)
+    if len(sents) < 20:
+        return None
+    L = [len(s) if lang == "zh" else len(s.split()) for s in sents]
+    n = len(L)
+    mean = sum(L) / n
+    sd = (sum((x - mean) ** 2 for x in L) / n) ** 0.5
+    near = 5 if lang == "zh" else 3
+    runs = sum(1 for i in range(n - 2) if max(L[i:i + 3]) - min(L[i:i + 3]) <= near)
+    return {
+        "n": n, "mean": mean, "sd": sd,
+        "runs100": runs / n * 100,
+        "long": sum(1 for x in L if x >= (60 if lang == "zh" else 41)) / n * 100,
+    }
+
+
+def series_baseline(lang: str, exclude: Path) -> list[dict]:
+    """系列已發布文章的句長分布,當作這個 venue 的基準。
+
+    為什麼不用外部數字:sepia 的人類基準來自台灣新聞長文語料(每句中位數 59 字),
+    技術部落格本來就寫得短 —— 拿新聞的數字當及格線,全系列 11 篇會一起亮紅燈
+    (2026-10-23 試過)。sepia 自己的 "Read the venue first" 講的就是這件事:
+    場域的既有稿件定義目標,不是規則書。外部數字只放在 detail 裡當參考。
+    """
+    today = datetime.date.today().isoformat()
+    out = []
+    for d in sorted(STORY.iterdir()):
+        if not d.is_dir() or d.resolve() == exclude.resolve():
+            continue
+        # 資料夾前綴是發布日;還沒發的不列入基準
+        if not re.match(r"\d{4}-\d{2}-\d{2}_", d.name) or d.name[:10] > today:
+            continue
+        f = d / ("index.md" if lang == "zh" else "index-en.md")
+        if not f.exists():
+            continue
+        if st := rhythm_stats(f.read_text(encoding="utf-8"), lang):
+            out.append(st)
+    return out
+
+
+def _median(xs: list[float]) -> float:
+    xs = sorted(xs)
+    n = len(xs)
+    return xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) / 2
+
+
+def check_rhythm(text: str, lang: str, article_dir: Path) -> Check:
+    """句長分布 —— 跟系列自己的既往文章比。只提醒,不擋發文。
+
+    標的是「這篇跟你平常寫的不一樣」,不是「這篇不像人寫的」:
+    句長離散度掉下來、或連續等長句變多,是文章讀起來單調的徵兆。
+    detail 裡一併列出 sepia(Nanako0129/sepia v0.12.4)的語料數字當參考,
+    那是台灣新聞長文與 2026 年三個模型的 register 級分布,**不是及格線**。
+    """
+    cur = rhythm_stats(text, lang)
+    if cur is None:
+        return Check(f"rhythm[{lang}]", True, "句數太少,不計", warn=True)
+
+    unit = "字" if lang == "zh" else "詞"
+    ref = ("人類新聞 59/34、2026 三模型 34-48/15-19" if lang == "zh"
+           else "41+ 詞人類 12.0%、2023 base 5.5%")
+    stat = (f"{cur['n']} 句,平均 {cur['mean']:.0f}{unit} SD {cur['sd']:.0f},"
+            f"{'60+' if lang == 'zh' else '41+'}{unit} {cur['long']:.0f}%,"
+            f"近等長 {cur['runs100']:.0f}/百句")
+
+    base = series_baseline(lang, article_dir)
+    if len(base) < 5:
+        return Check(f"rhythm[{lang}]", True, f"{stat}(系列樣本 {len(base)} 篇,不足以比較;參考:{ref})", warn=True)
+
+    m_sd = _median([b["sd"] for b in base])
+    m_runs = _median([b["runs100"] for b in base])
+    notes = []
+    # 0.75 / 1.5 倍是看 2026-09 起 8 篇的實際散布定的,抓的是明顯的離群篇
+    if cur["sd"] < m_sd * 0.75:
+        notes.append(f"句長 SD {cur['sd']:.0f} 低於系列中位數 {m_sd:.0f} 的四分之三,長短句拉開一點")
+    if cur["runs100"] > max(m_runs * 1.5, m_runs + 3):
+        notes.append(f"近等長句 {cur['runs100']:.0f}/百句,系列中位數 {m_runs:.0f}")
+    if lang == "en":
+        because = len(re.findall(r"\bbecause\b", text, re.I))
+        stat += f",because {because}"
+        if because <= 1:
+            notes.append(f"because 只用 {because} 次(sepia §4:模型用量是人類的 20%,列為該補回來的連接詞)")
+
+    return Check(
+        f"rhythm[{lang}]",
+        not notes,
+        f"{stat}(系列 {len(base)} 篇:SD 中位數 {m_sd:.0f}、近等長 {m_runs:.0f}/百句;參考:{ref})"
+        + ("" if not notes else " ⚠ " + ";".join(notes)),
+        warn=True,
     )
 
 
@@ -318,14 +512,19 @@ def check_article(article: str) -> dict:
         checks.append(check_rules(lines, lang))
         checks.append(check_placeholders(lines, lang))
         checks.append(check_deident(text, lang, pats))
+        checks.append(check_bold(text, lang))
+        checks.append(check_linebreaks(text, lang))
+        checks.append(check_rhythm(text, lang, d))
     checks.append(check_fullwidth(zh))
     checks.extend(check_parity(zh, en))
 
-    failed = [c for c in checks if not c.ok]
+    failed = [c for c in checks if not c.ok and not c.warn]
+    warnings = [c for c in checks if not c.ok and c.warn]
     return {
         "article": article,
         "passed": not failed,
         "failed": len(failed),
+        "warnings": len(warnings),
         "checks": [c.as_dict for c in checks],
     }
 
